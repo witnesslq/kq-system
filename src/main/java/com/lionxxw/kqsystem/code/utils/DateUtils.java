@@ -11,15 +11,15 @@ import java.util.Date;
  * @version 1.0
  */
 public abstract class DateUtils {
-    public static final String DATE_FROMAT1 = "yyyy-MM-dd";
-    public static final String DATE_FROMAT2 = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_FROMAT_DAY = "yyyy-MM-dd";
+    public static final String DATE_FROMAT_SS = "yyyy-MM-dd HH:mm:ss";
 
     public static Date getDate(String s) {
         return getDate(s, null);
     }
 
     public static Date getJustDate(String s) {
-        return getDate(s, "yyyy-MM-dd");
+        return getDate(s, DATE_FROMAT_DAY);
     }
 
     public static Date getDate(long date) {
@@ -27,12 +27,12 @@ public abstract class DateUtils {
     }
 
     public static Date getJustDate(long date) {
-        return getDate(date, "yyyy-MM-dd");
+        return getDate(date, DATE_FROMAT_DAY);
     }
 
     public static Date getDate(long date, String format) {
         if (StringUtils.isEmpty(format)) {
-            format = "yyyy-MM-dd HH:mm:ss";
+            format = DATE_FROMAT_SS;
         }
 
         return getDate(formatDate(new Date(date), format), format);
@@ -42,7 +42,7 @@ public abstract class DateUtils {
         Date date;
         try {
             if (StringUtils.isEmpty(format)) {
-                format = "yyyy-MM-dd HH:mm:ss";
+                format = DATE_FROMAT_SS;
             }
 
             date = new SimpleDateFormat(format).parse(s);
@@ -62,12 +62,12 @@ public abstract class DateUtils {
     }
 
     public static String formatJustDate(long date) {
-        return formatDate(new Date(date), "yyyy-MM-dd");
+        return formatDate(new Date(date), DATE_FROMAT_DAY);
     }
 
     public static String formatDate(Date date, String format) {
         if (StringUtils.isEmpty(format)) {
-            format = "yyyy-MM-dd HH:mm:ss";
+            format = DATE_FROMAT_SS;
         }
 
         return new SimpleDateFormat(format).format(date);

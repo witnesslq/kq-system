@@ -131,7 +131,6 @@ public class LoginController extends BaseController{
     /**
      * 登出.
      *
-     * @param returnUrl the return url
      * @param request   the request
      * @param response  the response
      * @return the string
@@ -140,9 +139,9 @@ public class LoginController extends BaseController{
      * @date 2016 -07-07 19:01:22
      */
     @RequestMapping(value = "logout", method = RequestMethod.GET)
-    public String logout(String returnUrl ,HttpServletRequest request,HttpServletResponse response) throws Exception{
+    public String logout(HttpServletRequest request,HttpServletResponse response) throws Exception{
         sessionProvider.logout(request, response);
-        return "redirect:" + returnUrl;
+        return "redirect:/login.do";
     }
 
     /**

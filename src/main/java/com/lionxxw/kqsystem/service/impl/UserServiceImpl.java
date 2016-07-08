@@ -22,9 +22,9 @@ public class UserServiceImpl implements UserService {
 
     public UserDto save(UserDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
-        User User = BeanUtils.createBeanByTarget(obj, User.class);
-        userDao.insertSelective(User);
-        obj.setId(User.getId());
+        User user = BeanUtils.createBeanByTarget(obj, User.class);
+        userDao.insertSelective(user);
+        obj.setId(user.getId());
         return obj;
     }
 
@@ -40,21 +40,21 @@ public class UserServiceImpl implements UserService {
     public void update(UserDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
         ExceptionUtils.checkIdIsNull(obj.getId(), User.class, "update");
-        User User = BeanUtils.createBeanByTarget(obj, User.class);
-        userDao.updateByPrimaryKeySelective(User);
+        User user = BeanUtils.createBeanByTarget(obj, User.class);
+        userDao.updateByPrimaryKeySelective(user);
     }
 
     public UserDto getById(Integer id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, User.class, "getById");
-        User User = userDao.selectByPrimaryKey(id);
-        UserDto dto = BeanUtils.createBeanByTarget(User, UserDto.class);
+        User user = userDao.selectByPrimaryKey(id);
+        UserDto dto = BeanUtils.createBeanByTarget(user, UserDto.class);
         return dto;
     }
 
     public List<UserDto> queryByParam(UserDto obj) throws Exception {
-        List<User> Users = userDao.queryByParam(obj, null);
-        if (null != Users && Users.size() > 0){
-            List<UserDto> list = BeanUtils.createBeanListByTarget(Users, UserDto.class);
+        List<User> users = userDao.queryByParam(obj, null);
+        if (ObjectUtils.notEmpty(users)){
+            List<UserDto> list = BeanUtils.createBeanListByTarget(users, UserDto.class);
             return list;
         }
         return null;
@@ -64,8 +64,8 @@ public class UserServiceImpl implements UserService {
         int total = userDao.countByParam(obj);
         if (total > 0){
             query.setTotal(total);
-            List<User> Users = userDao.queryByParam(obj, query);
-            List<UserDto> list = BeanUtils.createBeanListByTarget(Users, UserDto.class);
+            List<User> users = userDao.queryByParam(obj, query);
+            List<UserDto> list = BeanUtils.createBeanListByTarget(users, UserDto.class);
             return new PageResult<UserDto>(query, list);
         }
         return null;
