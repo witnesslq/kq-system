@@ -1,20 +1,26 @@
 package com.lionxxw.kqsystem.controller;
 
 import com.lionxxw.kqsystem.code.constants.DataStatus;
+import com.lionxxw.kqsystem.code.model.Response;
+import com.lionxxw.kqsystem.code.utils.BeanUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.code.utils.ResponseUtils;
 import com.lionxxw.kqsystem.code.utils.StringUtils;
 import com.lionxxw.kqsystem.dto.UserDto;
+import com.lionxxw.kqsystem.mode.LoginUser;
 import com.lionxxw.kqsystem.service.UserService;
+import com.lionxxw.kqsystem.utils.WebServletUtils;
 import com.octo.captcha.service.image.ImageCaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.support.WebArgumentResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 
 /**
@@ -81,10 +87,12 @@ public class LoginController extends BaseController{
                         UserDto user = userService.getUserByAccount(account);
                         if (ObjectUtils.notNull(user)){
                             if (encodeMd5.encode(password).equals(user.getPassword())){
-                                sessionProvider.setAttribute(request, DataStatus.SESSION_USER, user);
+                                LoginUser loginUser = BeanUtils.createBeanByTarget(user, LoginUser.class);
+                                sessionProvider.setAttribute(request, DataStatus.SESSION_USER, loginUser);
+                                updateLoginInfo(user, request);
                                 if (StringUtils.isTrimEmpty(returnUrl)){
                                     // 首页
-                                    mv.setViewName("redirect:/kqs/index.do");
+                                    mv.setViewName("redirect:/kqs/main.do");
                                 }else{
                                     mv.setViewName("redirect:"+returnUrl);
                                 }
@@ -102,6 +110,22 @@ public class LoginController extends BaseController{
         }
 
         return mv;
+    }
+
+    /**
+     * 更新用户的登陆ip和登陆时间
+     * @param user
+     * @param request
+     */
+    private void updateLoginInfo(UserDto user, HttpServletRequest request) {
+        try {
+            user.setLastLoginIp(WebServletUtils.getIpAddr(request));
+            user.setLastLoginTime(new Date());
+            userService.update(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -136,7 +160,8 @@ public class LoginController extends BaseController{
     /**
      * 注册操作
      * 1.校验注册信息是否合法
-     * 2.注册以后,将新用户信息保存于session中,直接进入首页
+     * 2.加密用户密码
+     * 3.提示用户注册成功
      *
      * @param user the user
      * @return the string
@@ -144,10 +169,61 @@ public class LoginController extends BaseController{
      * @date 2016 -07-07 19:01:22
      */
     @RequestMapping(value = "register", method = RequestMethod.POST)
-    public ModelAndView register(UserDto user){
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("redirect:/kqs/index.do");
-        return mv;
+    public void register(UserDto user, HttpServletResponse response){
+        Response<String> res = new Response<String>();
+        try {
+            checkAccountException(user);
+            encryptPwd(user);
+            UserDto save = userService.save(user);
+            res.setMessage("恭喜您注册成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.setStatus(DataStatus.HTTP_FAILE);
+            res.setMessage(e.getMessage());
+        }
+        ResponseUtils.renderJson(response, res);
+    }
+
+    /**
+     * 密码加密
+     * @param user
+     */
+    private void encryptPwd(UserDto user) {
+        user.setPassword(encodeMd5.encode(user.getPassword()));
+    }
+
+    /**
+     * 校验注册信息是否合法
+     * @param user
+     */
+    private void checkAccountException(UserDto user) throws Exception {
+        if (ObjectUtils.isNull(user)){
+            throw new RuntimeException("注册用户对象为空!");
+        }
+        if (StringUtils.isTrimEmpty((user.getAccount()))){
+            throw new RuntimeException("注册账号不能为空!");
+        }
+        if (checkAccount(user.getAccount()) > 0){
+            throw new RuntimeException("该账号已经被注册了!");
+        }
+        if (StringUtils.isTrimEmpty(user.getCname())){
+            throw new RuntimeException("中文名不能为空!");
+        }
+        if (StringUtils.isTrimEmpty(user.getEname())){
+            throw new RuntimeException("花名不能为空!");
+        }
+        if (StringUtils.isTrimEmpty(user.getEmail())){
+            throw new RuntimeException("邮箱不能为空!");
+        }
+        if (StringUtils.isTrimEmpty(user.getMobile())){
+            throw new RuntimeException("手机号码不能为空!");
+        }
+        if (null == user.getSex()){
+            throw new RuntimeException("请选择性别!");
+        }
+        if (StringUtils.isTrimEmpty(user.getPassword())){
+            throw new RuntimeException("密码不能为空!");
+        }
     }
 
     /**
@@ -161,11 +237,15 @@ public class LoginController extends BaseController{
      */
     @RequestMapping(value = "checkAccount")
     public void checkAccount(String account, HttpServletResponse response) throws Exception{
+        ResponseUtils.renderText(response,  checkAccount(account)+"");
+    }
+
+    private int checkAccount(String account) throws Exception{
         UserDto user = userService.getUserByAccount(account);
         int i = 0;
         if (ObjectUtils.notNull(user)){
             ++i;
         }
-        ResponseUtils.renderText(response, i+"");
+        return i;
     }
 }

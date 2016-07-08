@@ -25,13 +25,19 @@ public class ResponseUtils {
      * <p>Description: 发送JSON格式数据 </p>
      * 
      * @param response
-     * @param text
+     * @param obj
      * @author wangxiang
      * @date 16/5/21 下午10:43
      * @version 1.0
      */
-    public static void renderJson(HttpServletResponse response, String text){
-        render(response, "application/json;charset=UTF-8", text);
+    public static void renderJson(HttpServletResponse response, Object obj){
+        String txt = "";
+        try {
+            txt = JsonUtils.toJson(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        render(response, "application/json;charset=UTF-8", txt);
     }
 
     /**		

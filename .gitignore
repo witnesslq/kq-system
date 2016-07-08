@@ -10,3 +10,16 @@
 *.classpath
 *.settings
 *.project
+#folder
+target/
+#fixed file
+.exe
+*/*.*.log
+.prefs
+.project
+.classpath
+.metadata
+.settings
+.DS_Store
+Thumbs.db
+*.tar.gz

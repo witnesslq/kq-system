@@ -65,7 +65,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/skin/js/validate_ex.js"/>
+<script type="text/javascript" src="/skin/js/validate_ex.js"></script>
 <script>
     function submitForm(){
         $('#ff').form('submit',{
@@ -73,7 +73,22 @@
                 return $(this).form('validate');
             },
             success:function(data){
-                $.messager.alert('Info', data, 'info');
+                var jsondata = null;//eval('(' + data + ')');
+                if (data instanceof Object){
+                    jsondata = data;
+                }else{
+                    jsondata = eval('(' + data + ')');
+                }
+                console.log(jsondata);
+                console.log(jsondata.status);
+                console.log(jsondata.message);
+                if (jsondata.status == 200){
+                    $.messager.alert('操作提示', jsondata.message, 'info', function(){
+                        window.location.href = '/login.do';
+                    });
+                }else{
+                    $.messager.alert('操作提示', jsondata.message, 'error');
+                }
             }
         });
     }

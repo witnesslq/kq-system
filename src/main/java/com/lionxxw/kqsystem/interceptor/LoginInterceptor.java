@@ -3,7 +3,7 @@ package com.lionxxw.kqsystem.interceptor;
 import com.lionxxw.kqsystem.code.constants.DataStatus;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.code.web.SessionProvider;
-import com.lionxxw.kqsystem.dto.UserDto;
+import com.lionxxw.kqsystem.mode.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,11 +30,9 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     // 方法前
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        UserDto user = (UserDto) sessionProvider.getAttribute(request, DataStatus.SESSION_USER);
+        LoginUser user = (LoginUser) sessionProvider.getAttribute(request, DataStatus.SESSION_USER);
         if(ObjectUtils.notNull(user)){
-            request.setAttribute("isLogin", true);
-        }else{
-            request.setAttribute("isLogin", false);
+            request.setAttribute("kqs_login_user", user);
         }
         String requestURI = request.getRequestURI();
 
