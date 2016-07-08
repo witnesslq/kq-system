@@ -5,11 +5,13 @@
     "children":[
       {
         "id":3,
-        "text":"加班查询"
+        "text":"加班查询",
+        "url":"/kqs/overtime/list.do"
       },
       {
         "id":4,
-        "text":"新增加班"
+        "text":"新增加班",
+        "url":"/kqs/overtime/add.do"
       }
     ]
   },
@@ -19,11 +21,13 @@
     "children":[
       {
         "id":5,
-        "text":"日志查询"
+        "text":"日志查询",
+        "url":"/kqs/workingLog/list.do"
       },
       {
         "id":6,
-        "text":"新增日志"
+        "text":"新增日志",
+        "url":"/kqs/workingLog/add.do"
       }
     ]
   }

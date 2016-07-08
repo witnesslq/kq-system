@@ -38,7 +38,7 @@ public class OvertimeController extends KqsController {
      */
     @RequestMapping(value = "/overtime/list")
     public String overtimeList(){
-        return "overtime/list";
+        return "kqs/overtime/list";
     }
 
     /**
@@ -73,7 +73,7 @@ public class OvertimeController extends KqsController {
      */
     @RequestMapping(value = "/overtime/add", method = RequestMethod.GET)
     public String add(){
-        return "overtime/add";
+        return "kqs/overtime/add";
     }
 
     /**
@@ -104,7 +104,7 @@ public class OvertimeController extends KqsController {
      */
     @RequestMapping(value = "/overtime/edit", method = RequestMethod.GET)
     public String edit(Long id){
-        return "overtime/edit";
+        return "kqs/overtime/edit";
     }
 
     /**

@@ -23,14 +23,16 @@ var _base = {
                         // 切换到指定面板
                         $('#center_tabs').tabs("select", node.text);
                     }else{
-                        var content = '<iframe scrolling="auto" frameborder="0"  src="/WEB-INF/view/kqs/overtime/base_6.html" style="width:100%;height:100%;"></iframe>';
-                        // 添加面板
-                        $('#center_tabs').tabs('add',{
-                            title:node.text,
-                            //content:'Tab Body',
-                            content:content,
-                            closable:true
-                        });
+                        if (node.url != null && node.url != '' && node.url != undefined){
+                            var content = '<iframe scrolling="auto" frameborder="0"  src="'+node.url+'" style="width:100%;height:100%;"></iframe>';
+                            // 添加面板
+                            $('#center_tabs').tabs('add',{
+                                title:node.text,
+                                //content:'Tab Body',
+                                content:content,
+                                closable:true
+                            });
+                        }
                     }
                 }
             });
