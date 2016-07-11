@@ -15,11 +15,11 @@ import java.util.Date;
  */
 public abstract class MyBatisBaseDao<T> {
 	
-	public int deleteByPrimaryKey(Integer id) throws Exception{
+	public int deleteByPrimaryKey(Long id) throws Exception{
 		return (Integer) DynamicMethod.invokeMethod(getMapper(), "deleteByPrimaryKey", new Object[]{id});
 	}
 	
-	public T selectByPrimaryKey(Integer id) throws Exception{
+	public T selectByPrimaryKey(Long id) throws Exception{
 		return (T) DynamicMethod.invokeMethod(getMapper(), "selectByPrimaryKey", new Object[]{id});
 	}
 

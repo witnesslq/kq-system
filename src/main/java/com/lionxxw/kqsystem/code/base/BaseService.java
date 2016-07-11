@@ -35,7 +35,7 @@ public interface BaseService<T> {
      * @date 16/5/5 下午8:20
      * @version 1.0
      */
-    boolean delById(Integer id) throws Exception;
+    boolean delById(Long id) throws Exception;
 
     /**
      * <p>Description: 更新对象 </p>
@@ -56,7 +56,7 @@ public interface BaseService<T> {
      * @date 16/5/5 下午8:23
      * @version 1.0
      */
-    T getById(Integer id) throws Exception;
+    T getById(Long id) throws Exception;
 
     /**		
      * <p>Description: 根据对象参数查询数据 </p>

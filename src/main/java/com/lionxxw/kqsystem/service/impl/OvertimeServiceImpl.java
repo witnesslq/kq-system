@@ -28,7 +28,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         return obj;
     }
 
-    public boolean delById(Integer id) throws Exception {
+    public boolean delById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, Overtime.class, "delById");
         int i = overtimeDao.deleteByPrimaryKey(id);
         if (i > 0){
@@ -44,7 +44,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         overtimeDao.updateByPrimaryKeySelective(overtime);
     }
 
-    public OvertimeDto getById(Integer id) throws Exception {
+    public OvertimeDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, Overtime.class, "getById");
         Overtime overtime = overtimeDao.selectByPrimaryKey(id);
         OvertimeDto dto = BeanUtils.createBeanByTarget(overtime, OvertimeDto.class);

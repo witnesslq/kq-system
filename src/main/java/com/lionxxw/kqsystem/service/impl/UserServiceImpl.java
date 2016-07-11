@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         return obj;
     }
 
-    public boolean delById(Integer id) throws Exception {
+    public boolean delById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, User.class, "delById");
         int i = userDao.deleteByPrimaryKey(id);
         if (i > 0){
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         userDao.updateByPrimaryKeySelective(user);
     }
 
-    public UserDto getById(Integer id) throws Exception {
+    public UserDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, User.class, "getById");
         User user = userDao.selectByPrimaryKey(id);
         UserDto dto = BeanUtils.createBeanByTarget(user, UserDto.class);

@@ -28,7 +28,7 @@ public class WorkingLogServiceImpl implements WorkingLogService {
         return obj;
     }
 
-    public boolean delById(Integer id) throws Exception {
+    public boolean delById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, WorkingLog.class, "delById");
         int i = workingLogDao.deleteByPrimaryKey(id);
         if (i > 0){
@@ -44,7 +44,7 @@ public class WorkingLogServiceImpl implements WorkingLogService {
         workingLogDao.updateByPrimaryKeySelective(workingLog);
     }
 
-    public WorkingLogDto getById(Integer id) throws Exception {
+    public WorkingLogDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, WorkingLog.class, "getById");
         WorkingLog workingLog = workingLogDao.selectByPrimaryKey(id);
         WorkingLogDto dto = BeanUtils.createBeanByTarget(workingLog, WorkingLogDto.class);

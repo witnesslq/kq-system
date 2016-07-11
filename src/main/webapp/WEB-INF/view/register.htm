@@ -79,9 +79,6 @@
                 }else{
                     jsondata = eval('(' + data + ')');
                 }
-                console.log(jsondata);
-                console.log(jsondata.status);
-                console.log(jsondata.message);
                 if (jsondata.status == 200){
                     $.messager.alert('操作提示', jsondata.message, 'info', function(){
                         window.location.href = '/login.do';

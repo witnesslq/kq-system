@@ -1,6 +1,7 @@
 package com.lionxxw.kqsystem.controller;
 
 import com.lionxxw.kqsystem.code.constants.DataStatus;
+import com.lionxxw.kqsystem.code.model.EasyUIPage;
 import com.lionxxw.kqsystem.code.model.PageQuery;
 import com.lionxxw.kqsystem.code.model.PageResult;
 import com.lionxxw.kqsystem.code.model.Response;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * 个人加班控制层
@@ -51,29 +53,16 @@ public class OvertimeController extends KqsController {
      */
     @RequestMapping(value = "/overtime/getOvertimeDatas")
     public void getOvertimeDatas(HttpServletRequest request, HttpServletResponse response, OvertimeDto param, PageQuery query){
-        Response<PageResult<OvertimeDto>> res = new Response<PageResult<OvertimeDto>>();
         LoginUser loginUser = getLoginUser(request);
         param.setUserId(loginUser.getId());
         PageResult<OvertimeDto> datas = null;
         try {
             datas = overtimeService.queryByPage(param, query);
-            res.setData(datas);
         } catch (Exception e) {
             e.printStackTrace();
-            res.setStatus(DataStatus.HTTP_FAILE);
-            res.setMessage(e.getMessage());
         }
 
-        ResponseUtils.renderJson(response, res);
-    }
-
-    /**
-     * 跳转加班新增页面
-     * @return
-     */
-    @RequestMapping(value = "/overtime/add", method = RequestMethod.GET)
-    public String add(){
-        return "kqs/overtime/add";
+        ResponseUtils.renderJson(response, new EasyUIPage<OvertimeDto>(datas));
     }
 
     /**
@@ -99,12 +88,21 @@ public class OvertimeController extends KqsController {
 
     /**
      * 跳转加班记录编辑页面
-     * @param id
-     * @return
+     *
+     * @param response the response
+     * @param id       the id
+     * @author wangjian @baofoo.com
+     * @date 2016 -07-11 10:25:23
      */
     @RequestMapping(value = "/overtime/edit", method = RequestMethod.GET)
-    public String edit(Long id){
-        return "kqs/overtime/edit";
+    public void edit(HttpServletResponse response, Long id){
+        OvertimeDto overtime = null;
+        try {
+            overtime = overtimeService.getById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ResponseUtils.renderJson(response, overtime);
     }
 
     /**
@@ -114,10 +112,11 @@ public class OvertimeController extends KqsController {
      */
     @RequestMapping(value = "/overtime/edit", method = RequestMethod.POST)
     public void edit(HttpServletRequest request, HttpServletResponse response, OvertimeDto dto){
-        Response<PageResult<OvertimeDto>> res = new Response<PageResult<OvertimeDto>>();
+        Response<OvertimeDto> res = new Response<OvertimeDto>();
         LoginUser loginUser = getLoginUser(request);
         dto.setUserId(loginUser.getId());
         try {
+            dto.setLastUpdateTime(new Date());
             overtimeService.update(dto);
             res.setMessage("修改加班记录成功!");
         } catch (Exception e) {
@@ -134,6 +133,7 @@ public class OvertimeController extends KqsController {
      * @param response
      * @param ids
      */
+    @RequestMapping(value = "/overtime/del")
     public void del(HttpServletRequest request, HttpServletResponse response, Long[] ids){
         Response<PageResult<OvertimeDto>> res = new Response<PageResult<OvertimeDto>>();
         try {
