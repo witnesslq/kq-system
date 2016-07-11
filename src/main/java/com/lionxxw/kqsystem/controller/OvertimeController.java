@@ -1,10 +1,7 @@
 package com.lionxxw.kqsystem.controller;
 
 import com.lionxxw.kqsystem.code.constants.DataStatus;
-import com.lionxxw.kqsystem.code.model.EasyUIPage;
-import com.lionxxw.kqsystem.code.model.PageQuery;
-import com.lionxxw.kqsystem.code.model.PageResult;
-import com.lionxxw.kqsystem.code.model.Response;
+import com.lionxxw.kqsystem.code.model.*;
 import com.lionxxw.kqsystem.code.utils.ResponseUtils;
 import com.lionxxw.kqsystem.dto.OvertimeDto;
 import com.lionxxw.kqsystem.entity.Overtime;
@@ -52,12 +49,12 @@ public class OvertimeController extends KqsController {
      * @throws Exception
      */
     @RequestMapping(value = "/overtime/getOvertimeDatas")
-    public void getOvertimeDatas(HttpServletRequest request, HttpServletResponse response, OvertimeDto param, PageQuery query){
+    public void getOvertimeDatas(HttpServletRequest request, HttpServletResponse response, OvertimeDto param, EasyUiPageQuery query){
         LoginUser loginUser = getLoginUser(request);
         param.setUserId(loginUser.getId());
         PageResult<OvertimeDto> datas = null;
         try {
-            datas = overtimeService.queryByPage(param, query);
+            datas = overtimeService.queryByPage(param, new PageQuery(query));
         } catch (Exception e) {
             e.printStackTrace();
         }

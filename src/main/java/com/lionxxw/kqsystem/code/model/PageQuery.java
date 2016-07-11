@@ -30,6 +30,11 @@ public class PageQuery implements Serializable {
         currPage = 1;
     }
 
+    public PageQuery(EasyUiPageQuery query){
+        this.pageSize = query.getRows();
+        currPage = query.getPage();
+    }
+
     private long total;
 
     private int pageSize = 10;
