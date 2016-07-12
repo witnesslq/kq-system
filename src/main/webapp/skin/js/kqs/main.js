@@ -9,10 +9,10 @@ var _base = {
                 url: "/data/menu.json",
                 dnd:true, // 是否启动拖拽功能
                 animate:true, // 是否显示展开/折叠动画
-                checkbox:true,// 是否在每一个节点上显示复选框
+                //checkbox:true,// 是否在每一个节点上显示复选框
                 lines:true, // 是否显示树控件上的虚线
                 onClick:function(node){
-                    console.log(node);
+                    //console.log(node);
                     // $("#easyuitree").tree("getChildren",node)
                     var children = node.children; // 获取子节点
 //                            console.log(children);
@@ -68,9 +68,9 @@ function updateUser(){
             }else{
                 jsondata = eval('(' + data + ')');
             }
-            console.log(jsondata);
-            console.log(jsondata.status);
-            console.log(jsondata.message);
+            //console.log(jsondata);
+           // console.log(jsondata.status);
+            //console.log(jsondata.message);
             if (jsondata.status == 200){
                 $.messager.alert('操作提示', jsondata.message, 'info',function(){
                     $('#dlg').dialog('close');
