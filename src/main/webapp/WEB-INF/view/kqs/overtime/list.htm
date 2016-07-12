@@ -28,11 +28,13 @@
 <body>
 <div>
     <div style="height: 30px;">
-        日期:
-        <input id="workDateS" name="workDateS" class ="easyui-datebox" style="width: 150px" />
-        至
-        <input id="workDateE" name="workDateE" class="easyui-datebox" style="width: 150px" />
-        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="reloadgrid()" style="vertical-align: middle;">Search</a>
+        <form method="post" id="ex_form">
+            日期:
+            <input id="workDateS" name="workDateS" class ="easyui-datebox" style="width: 150px" />
+            至
+            <input id="workDateE" name="workDateE" class="easyui-datebox" style="width: 150px" />
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="reloadgrid()" style="vertical-align: middle;">Search</a>
+        </form>
     </div>
     <table id="datagrid"></table>
 </div>
@@ -72,8 +74,6 @@
     $(function () {
         /**
          * 界面会传过去2个参数,第一个参数是当前页page,第二个参数每页显示多少条rows
-         *
-         *
          */
         $("#datagrid").datagrid({
             columns: [[
@@ -101,6 +101,13 @@
                     handler: function () {
                         destroyData();
                     }
+                },"-",
+                {
+                    text: "导出",
+                    iconCls: 'icon-undo',
+                    handler: function () {
+                        exportData();
+                    }
                 }
             ],
             onLoadSuccess: function (data) {
@@ -126,7 +133,7 @@
         url = "/kqs/overtime/add.do";
     }
     function editData(row) {
-        console.log(row);
+        //console.log(row);
         if (row) {
             $("#dlg").dialog("open").dialog('setTitle', '编辑加班记录');
             $('#ff').form('clear');
@@ -167,38 +174,42 @@
             $.messager.alert("提示", "请选择要删除的行！", "info");
             return;
         }else{
-            console.log(row);
-            if (row) {
-                $.messager.confirm('Confirm', '你确定删除吗?', function (r) {
-                    if (r) {
-                        var ids= "";
-                        for (var i = 0; i < row.length; i++) {
-                            ids += row[i].id + ",";
-                        }
-                        console.log(ids);
-                        $.post('/kqs/overtime/del.do', { ids: ids}, function (data) {
-                            var jsondata = null;//eval('(' + data + ')');
-                            if (data instanceof Object){
-                                jsondata = data;
-                            }else{
-                                jsondata = eval('(' + data + ')');
-                            }
-                            if (jsondata.status == 200) {
-                                $.messager.alert('操作提示', jsondata.message, 'info', function(){
-                                    reloadgrid();
-                                    //$('#datagrid').datagrid('reload');    // reload the user data
-                                });
-                            } else {
-                                $.messager.show({   // show error message
-                                    title: '异常提示',
-                                    msg: jsondata.message
-                                });
-                            }
-                        }, 'json');
+            //console.log(row);
+            $.messager.confirm('Confirm', '你确定删除吗?', function (r) {
+                if (r) {
+                    var ids= "";
+                    for (var i = 0; i < row.length; i++) {
+                        ids += row[i].id + ",";
                     }
-                });
-            }
+                    console.log(ids);
+                    $.post('/kqs/overtime/del.do', { ids: ids}, function (data) {
+                        var jsondata = null;//eval('(' + data + ')');
+                        if (data instanceof Object){
+                            jsondata = data;
+                        }else{
+                            jsondata = eval('(' + data + ')');
+                        }
+                        if (jsondata.status == 200) {
+                            $.messager.alert('操作提示', jsondata.message, 'info', function(){
+                                reloadgrid();
+                                //$('#datagrid').datagrid('reload');    // reload the user data
+                            });
+                        } else {
+                            $.messager.show({   // show error message
+                                title: '异常提示',
+                                msg: jsondata.message
+                            });
+                        }
+                    }, 'json');
+                }
+            });
         }
+    }
+
+    function exportData(){
+        var url = '/kqs/overtime/export.do';
+        $("#ex_form").attr("action", url);
+        $("#ex_form").submit();
     }
 
     function reloadgrid(){

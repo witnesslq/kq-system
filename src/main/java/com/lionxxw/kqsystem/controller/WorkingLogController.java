@@ -2,10 +2,16 @@ package com.lionxxw.kqsystem.controller;
 
 import com.lionxxw.kqsystem.code.constants.DataStatus;
 import com.lionxxw.kqsystem.code.model.*;
+import com.lionxxw.kqsystem.code.utils.DateUtils;
 import com.lionxxw.kqsystem.code.utils.ResponseUtils;
+import com.lionxxw.kqsystem.dto.OvertimeDto;
 import com.lionxxw.kqsystem.dto.WorkingLogDto;
 import com.lionxxw.kqsystem.mode.LoginUser;
 import com.lionxxw.kqsystem.service.WorkingLogService;
+import com.lionxxw.kqsystem.utils.ExportExcelUtils;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 个人工作日志管理控制层
@@ -140,5 +148,44 @@ public class WorkingLogController extends KqsController {
             res.setMessage(e.getMessage());
         }
         ResponseUtils.renderJson(response, res);
+    }
+
+    /**
+     * 个人工作日志导出
+     * @param request
+     * @param response
+     * @param param
+     */
+    @RequestMapping(value = "/workingLog/export")
+    public void export(HttpServletRequest request, HttpServletResponse response, WorkingLogDto param){
+        LoginUser loginUser = getLoginUser(request);
+        param.setUserId(loginUser.getId());
+        // 导出参数
+        HSSFWorkbook wb = new HSSFWorkbook();// 建立新HSSFWorkbook对象
+        HSSFRow row = null;
+
+        // 导出
+        try {
+            // 查询获取数据
+            String fillName = loginUser.getCname()+"@"+loginUser.getEname()+"工作日志";
+            HSSFSheet sheet = wb.createSheet(fillName);// 建立新的sheet对象
+            ExportExcelUtils.setTableName(response, fillName);
+            String[] cellNameArr = {"日期", "日志"};
+            ExportExcelUtils.setCellHead(sheet, row, wb, cellNameArr);// 创建列头
+            List<String[]> list = new ArrayList<String[]>();
+            List<WorkingLogDto> datas = workingLogService.queryFullWorkingLog(param);
+            for (WorkingLogDto sett : datas) {
+                String[] data = {
+                        getString(DateUtils.formatDate(sett.getWorkDate(), DateUtils.DATE_FROMAT_DAY)),
+                        getString(sett.getNote().replaceAll("<[a-zA-Z]+[1-9]?[^><]*>", "").replaceAll("</[a-zA-Z]+[1-9]?>", ""))
+                };
+                list.add(data);
+            }
+            int[] cellTypeArr = {1, 1};// 1为字符串
+            ExportExcelUtils.setCellData(sheet, row, list, cellTypeArr); // 创建列的数据
+            wb.write(response.getOutputStream());// 导出excel
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

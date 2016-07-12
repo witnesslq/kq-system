@@ -30,11 +30,13 @@
 <body>
 <div>
     <div style="height: 30px;">
-        日期:
-        <input id="workDateS" name="workDateS" class ="easyui-datebox" style="width: 150px" />
-        至
-        <input id="workDateE" name="workDateE" class="easyui-datebox" style="width: 150px" />
-        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="reloadgrid()" style="vertical-align: middle;">Search</a>
+        <form method="post" id="ex_form">
+            日期:
+            <input id="workDateS" name="workDateS" class ="easyui-datebox" style="width: 150px" />
+            至
+            <input id="workDateE" name="workDateE" class="easyui-datebox" style="width: 150px" />
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="reloadgrid()" style="vertical-align: middle;">Search</a>
+        </form>
     </div>
     <table id="datagrid"></table>
 </div>
@@ -88,6 +90,13 @@
                     iconCls: 'icon-remove',
                     handler: function () {
                         destroyData();
+                    }
+                },"-",
+                {
+                    text: "导出",
+                    iconCls: 'icon-undo',
+                    handler: function () {
+                        exportData();
                     }
                 }
             ],
@@ -189,6 +198,12 @@
                 });
             }
         }
+    }
+
+    function exportData(){
+        var url = '/kqs/workingLog/export.do';
+        $("#ex_form").attr("action", url);
+        $("#ex_form").submit();
     }
 
     function reloadgrid(){

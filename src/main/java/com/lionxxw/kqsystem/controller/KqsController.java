@@ -17,4 +17,17 @@ public class KqsController extends BaseController {
         LoginUser user = (LoginUser) sessionProvider.getAttribute(request, DataStatus.SESSION_USER);
         return user;
     }
+
+    /**
+     * 字符转化
+     *
+     * @param obj
+     * @return
+     */
+    public static String getString(Object obj) {
+        if ("".equals(obj)||obj == null) {
+            return "";
+        }
+        return String.valueOf(obj);
+    }
 }

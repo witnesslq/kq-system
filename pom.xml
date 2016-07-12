@@ -38,9 +38,15 @@
     <commons-lang-version>2.6</commons-lang-version>
     <lombok-version>1.14.4</lombok-version>
     <jackson-version>2.1.0</jackson-version>
+    <poi-version>3.8</poi-version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${poi-version}</version>
+    </dependency>
     <!--spring-->
     <dependency>
       <groupId>org.springframework</groupId>

@@ -74,4 +74,13 @@ public class WorkingLogServiceImpl implements WorkingLogService {
     public void batchDelWorkingLog(Long[] ids) throws Exception {
         workingLogDao.batchDelWorkingLog(ids);
     }
+
+    public List<WorkingLogDto> queryFullWorkingLog(WorkingLogDto param) throws Exception {
+        List<WorkingLog> workingLogs = workingLogDao.queryFullWorkingLog(param);
+        if (ObjectUtils.notEmpty(workingLogs)){
+            List<WorkingLogDto> list = BeanUtils.createBeanListByTarget(workingLogs, WorkingLogDto.class);
+            return list;
+        }
+        return null;
+    }
 }

@@ -2,11 +2,16 @@ package com.lionxxw.kqsystem.controller;
 
 import com.lionxxw.kqsystem.code.constants.DataStatus;
 import com.lionxxw.kqsystem.code.model.*;
+import com.lionxxw.kqsystem.code.utils.DateUtils;
 import com.lionxxw.kqsystem.code.utils.ResponseUtils;
 import com.lionxxw.kqsystem.dto.OvertimeDto;
 import com.lionxxw.kqsystem.entity.Overtime;
 import com.lionxxw.kqsystem.mode.LoginUser;
 import com.lionxxw.kqsystem.service.OvertimeService;
+import com.lionxxw.kqsystem.utils.ExportExcelUtils;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 个人加班控制层
@@ -142,5 +149,47 @@ public class OvertimeController extends KqsController {
             res.setMessage(e.getMessage());
         }
         ResponseUtils.renderJson(response, res);
+    }
+
+    /**
+     * 个人加班记录导出
+     * @param request
+     * @param response
+     * @param param
+     */
+    @RequestMapping(value = "/overtime/export")
+    public void export(HttpServletRequest request, HttpServletResponse response, OvertimeDto param){
+        LoginUser loginUser = getLoginUser(request);
+        param.setUserId(loginUser.getId());
+        // 导出参数
+        HSSFWorkbook wb = new HSSFWorkbook();// 建立新HSSFWorkbook对象
+        HSSFRow row = null;
+
+        // 导出
+        try {
+            // 查询获取数据
+            String fillName = loginUser.getCname()+"@"+loginUser.getEname()+"加班记录";
+            HSSFSheet sheet = wb.createSheet(fillName);// 建立新的sheet对象
+            ExportExcelUtils.setTableName(response, fillName);
+            String[] cellNameArr = {"加班日期", "开始时间", "结束时间", "总计(单位:小时)","备注"};
+            ExportExcelUtils.setCellHead(sheet, row, wb, cellNameArr);// 创建列头
+            List<String[]> list = new ArrayList<String[]>();
+            List<OvertimeDto> datas = overtimeService.queryByParam(param);
+            for (OvertimeDto sett : datas) {
+                String[] data = {
+                        getString(DateUtils.formatDate(sett.getWorkDate(), DateUtils.DATE_FROMAT_DAY)),
+                        getString(sett.getStartTime()),
+                        getString(sett.getEndTime()),
+                        getString(sett.getTotalHouse()),
+                        getString(sett.getNote())
+                };
+                list.add(data);
+            }
+            int[] cellTypeArr = {1, 1, 1, 1, 1};// 1为字符串
+            ExportExcelUtils.setCellData(sheet, row, list, cellTypeArr); // 创建列的数据
+            wb.write(response.getOutputStream());// 导出excel
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

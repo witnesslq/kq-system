@@ -76,4 +76,13 @@ public class WorkingLogDao extends MyBatisBaseDao<WorkingLog> {
         criteria.andIdIn(Arrays.asList(ids));
         mapper.updateByExampleSelective(record, example);
     }
+
+    public List<WorkingLog> queryFullWorkingLog(WorkingLogDto param) {
+        WorkingLogExample example = new WorkingLogExample();
+        WorkingLogExample.Criteria criteria = example.createCriteria();
+        assemblyParams(param, criteria);
+        example.setOrderByClause("work_date desc");
+        List<WorkingLog> results = mapper.selectByExampleWithBLOBs(example);
+        return results;
+    }
 }
