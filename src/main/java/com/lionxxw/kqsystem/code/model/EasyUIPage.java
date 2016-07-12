@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,10 @@ public class EasyUIPage<T> implements Serializable{
     public EasyUIPage(PageResult<T> page){
         if (ObjectUtils.notNull(page) && ObjectUtils.notEmpty(page.getResults())){
             this.total = page.getTotal();
-            rows = page.getResults();
+            this.rows = page.getResults();
+        }else{
+            this.total = 0;
+            this.rows = new ArrayList<T>();
         }
     }
 }

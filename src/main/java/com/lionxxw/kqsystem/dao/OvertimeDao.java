@@ -34,9 +34,9 @@ public class OvertimeDao extends MyBatisBaseDao<Overtime> {
         OvertimeExample.Criteria criteria = example.createCriteria();
         assemblyParams(obj, criteria);
         if(null != query){
-            example.setOrderByClause("create_time desc limit "+query.getStartNum() +"," + query.getPageSize());
+            example.setOrderByClause("work_date desc limit "+query.getStartNum() +"," + query.getPageSize());
         }else{
-            example.setOrderByClause("create_time desc");
+            example.setOrderByClause("work_date desc");
         }
         List<Overtime> results = mapper.selectByExample(example);
         return results;
