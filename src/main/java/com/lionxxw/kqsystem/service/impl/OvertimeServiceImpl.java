@@ -72,6 +72,6 @@ public class OvertimeServiceImpl implements OvertimeService {
     }
 
     public void batchDelOvertime(Long[] ids) throws Exception {
-
+        overtimeDao.batchDelOvertime(ids);
     }
 }

@@ -70,4 +70,8 @@ public class WorkingLogServiceImpl implements WorkingLogService {
         }
         return null;
     }
+
+    public void batchDelWorkingLog(Long[] ids) throws Exception {
+        workingLogDao.batchDelWorkingLog(ids);
+    }
 }

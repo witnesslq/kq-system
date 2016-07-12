@@ -6,6 +6,8 @@ import com.lionxxw.kqsystem.code.utils.DateUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.code.utils.StringUtils;
 import com.lionxxw.kqsystem.dto.WorkingLogDto;
+import com.lionxxw.kqsystem.entity.Overtime;
+import com.lionxxw.kqsystem.entity.OvertimeExample;
 import com.lionxxw.kqsystem.entity.WorkingLog;
 import com.lionxxw.kqsystem.entity.WorkingLogExample;
 import com.lionxxw.kqsystem.mapper.WorkingLogMapper;
@@ -13,6 +15,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -32,9 +35,9 @@ public class WorkingLogDao extends MyBatisBaseDao<WorkingLog> {
         WorkingLogExample.Criteria criteria = example.createCriteria();
         assemblyParams(obj, criteria);
         if(null != query){
-            example.setOrderByClause("create_time desc limit "+query.getStartNum() +"," + query.getPageSize());
+            example.setOrderByClause("work_date desc limit "+query.getStartNum() +"," + query.getPageSize());
         }else{
-            example.setOrderByClause("create_time desc");
+            example.setOrderByClause("work_date desc");
         }
         List<WorkingLog> results = mapper.selectByExample(example);
         return results;
@@ -63,5 +66,14 @@ public class WorkingLogDao extends MyBatisBaseDao<WorkingLog> {
             }
         }
         criteria.andIsDelEqualTo(false);
+    }
+
+    public void batchDelWorkingLog(Long[] ids) {
+        WorkingLog record = new WorkingLog();
+        record.setIsDel(true);
+        WorkingLogExample example = new WorkingLogExample();
+        WorkingLogExample.Criteria criteria = example.createCriteria();
+        criteria.andIdIn(Arrays.asList(ids));
+        mapper.updateByExampleSelective(record, example);
     }
 }
