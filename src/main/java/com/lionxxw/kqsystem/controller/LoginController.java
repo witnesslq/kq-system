@@ -1,5 +1,6 @@
 package com.lionxxw.kqsystem.controller;
 
+import com.lionxxw.kqsystem.code.base.ServiceException;
 import com.lionxxw.kqsystem.code.constants.DataStatus;
 import com.lionxxw.kqsystem.code.model.Response;
 import com.lionxxw.kqsystem.code.utils.BeanUtils;
@@ -173,12 +174,16 @@ public class LoginController extends BaseController{
         try {
             checkAccountException(user);
             encryptPwd(user);
-            UserDto save = userService.save(user);
+            userService.save(user);
             res.setMessage("恭喜您注册成功!");
-        } catch (Exception e) {
+        } catch (ServiceException e) {
             e.printStackTrace();
             res.setStatus(DataStatus.HTTP_FAILE);
             res.setMessage(e.getMessage());
+        } catch (Exception ex){
+            ex.printStackTrace();
+            res.setStatus(DataStatus.HTTP_FAILE);
+            res.setMessage("系统异常,请联系管理员!");
         }
         ResponseUtils.renderJson(response, res);
     }
@@ -197,31 +202,37 @@ public class LoginController extends BaseController{
      */
     private void checkAccountException(UserDto user) throws Exception {
         if (ObjectUtils.isNull(user)){
-            throw new RuntimeException("注册用户对象为空!");
+            throw new ServiceException("注册用户对象为空!");
         }
         if (StringUtils.isTrimEmpty((user.getAccount()))){
-            throw new RuntimeException("注册账号不能为空!");
+            throw new ServiceException("注册账号不能为空!");
         }
         if (checkAccount(user.getAccount()) > 0){
-            throw new RuntimeException("该账号已经被注册了!");
+            throw new ServiceException("该账号已经被注册了!");
         }
         if (StringUtils.isTrimEmpty(user.getCname())){
-            throw new RuntimeException("中文名不能为空!");
+            throw new ServiceException("中文名不能为空!");
         }
         if (StringUtils.isTrimEmpty(user.getEname())){
-            throw new RuntimeException("花名不能为空!");
+            throw new ServiceException("花名不能为空!");
         }
         if (StringUtils.isTrimEmpty(user.getEmail())){
-            throw new RuntimeException("邮箱不能为空!");
+            throw new ServiceException("邮箱不能为空!");
+        }
+        if (checkEmail(user.getEmail()) > 0){
+            throw new ServiceException("该邮箱已经被注册了!");
         }
         if (StringUtils.isTrimEmpty(user.getMobile())){
-            throw new RuntimeException("手机号码不能为空!");
+            throw new ServiceException("手机号码不能为空!");
+        }
+        if (checkMobile(user.getMobile()) > 0){
+            throw new ServiceException("该手机号码已经被注册了!");
         }
         if (null == user.getSex()){
-            throw new RuntimeException("请选择性别!");
+            throw new ServiceException("请选择性别!");
         }
         if (StringUtils.isTrimEmpty(user.getPassword())){
-            throw new RuntimeException("密码不能为空!");
+            throw new ServiceException("密码不能为空!");
         }
     }
 
@@ -239,8 +250,54 @@ public class LoginController extends BaseController{
         ResponseUtils.renderText(response,  checkAccount(account)+"");
     }
 
+    /**
+     * Check mobile.
+     *
+     * @param mobile   the mobile
+     * @param response the response
+     * @throws Exception the exception
+     * @author wangjian @baofoo.com
+     * @date 2016 -07-27 10:45:43
+     */
+    @RequestMapping(value = "checkMobile")
+    public void checkMobile(String mobile, HttpServletResponse response) throws Exception{
+        ResponseUtils.renderText(response,  checkMobile(mobile)+"");
+    }
+
+    /**
+     * Check email.
+     *
+     * @param email    the email
+     * @param response the response
+     * @throws Exception the exception
+     * @author wangjian @baofoo.com
+     * @date 2016 -07-27 10:45:47
+     */
+    @RequestMapping(value = "checkEmail")
+    public void checkEmail(String email, HttpServletResponse response) throws Exception{
+        ResponseUtils.renderText(response,  checkEmail(email)+"");
+    }
+
     private int checkAccount(String account) throws Exception{
         UserDto user = userService.getUserByAccount(account);
+        int i = 0;
+        if (ObjectUtils.notNull(user)){
+            ++i;
+        }
+        return i;
+    }
+
+    private int checkMobile(String mobile) throws Exception{
+        UserDto user = userService.getUserByMobile(mobile);
+        int i = 0;
+        if (ObjectUtils.notNull(user)){
+            ++i;
+        }
+        return i;
+    }
+
+    private int checkEmail(String email) throws Exception{
+        UserDto user = userService.getUserByEmail(email);
         int i = 0;
         if (ObjectUtils.notNull(user)){
             ++i;

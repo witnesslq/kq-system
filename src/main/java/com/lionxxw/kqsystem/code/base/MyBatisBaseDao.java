@@ -27,15 +27,15 @@ public abstract class MyBatisBaseDao<T> {
 		return (Integer) DynamicMethod.invokeMethod(getMapper(), "insert", new Object[]{obj});
 	}
 	
-	public int updateByPrimaryKey(T obj){
+	public int updateByPrimaryKey(T obj) throws Exception{
 		return (Integer) DynamicMethod.invokeMethod(getMapper(), "updateByPrimaryKey", new Object[]{obj});
 	}
 	
-	public int insertSelective(T obj){
+	public int insertSelective(T obj) throws Exception{
 		return (Integer) DynamicMethod.invokeMethod(getMapper(), "insertSelective", new Object[]{obj});
 	}
 	
-	public int updateByPrimaryKeySelective(T obj){
+	public int updateByPrimaryKeySelective(T obj) throws Exception{
 		return (Integer) DynamicMethod.invokeMethod(getMapper(), "updateByPrimaryKeySelective", new Object[]{obj});
 	}
 	

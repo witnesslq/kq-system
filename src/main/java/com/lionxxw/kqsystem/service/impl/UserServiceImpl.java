@@ -5,6 +5,7 @@ import com.lionxxw.kqsystem.code.model.PageResult;
 import com.lionxxw.kqsystem.code.utils.BeanUtils;
 import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
+import com.lionxxw.kqsystem.code.utils.StringUtils;
 import com.lionxxw.kqsystem.dao.UserDao;
 import com.lionxxw.kqsystem.dto.UserDto;
 import com.lionxxw.kqsystem.entity.User;
@@ -72,11 +73,39 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto getUserByAccount(String account) throws Exception {
-        UserDto user = new UserDto();
-        user.setAccount(account);
-        List<UserDto> users = queryByParam(user);
-        if (ObjectUtils.notEmpty(users)){
-            return users.get(0);
+        if (StringUtils.notTrimEmpty(account)){
+            UserDto user = new UserDto();
+            user.setAccount(account.trim());
+            List<UserDto> users = queryByParam(user);
+            if (ObjectUtils.notEmpty(users)){
+                return users.get(0);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public UserDto getUserByMobile(String mobile) throws Exception {
+        if (StringUtils.notTrimEmpty(mobile)){
+            UserDto user = new UserDto();
+            user.setMobile(mobile.trim());
+            List<UserDto> users = queryByParam(user);
+            if (ObjectUtils.notEmpty(users)){
+                return users.get(0);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public UserDto getUserByEmail(String email) throws Exception {
+        if (StringUtils.notTrimEmpty(email)) {
+            UserDto user = new UserDto();
+            user.setEmail(email.trim());
+            List<UserDto> users = queryByParam(user);
+            if (ObjectUtils.notEmpty(users)) {
+                return users.get(0);
+            }
         }
         return null;
     }

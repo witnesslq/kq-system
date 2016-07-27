@@ -248,6 +248,58 @@ $.extend($.fn.validatebox.defaults.rules, {
         },
         message: '该账号已经被注册！'
     },
+    checkMobile :{
+        validator : function(value,param){
+            var sysUser = {};
+            var flag ;
+            sysUser.account = value;
+            $.ajax({
+                url : '/checkMobile.do',
+                type : 'POST',
+                timeout : 60000,
+                data:sysUser,
+                async: false,
+                success : function(data, textStatus, jqXHR) {
+                    if (data == "0") {
+                        flag = true;
+                    }else{
+                        flag = false;
+                    }
+                }
+            });
+            if(flag){
+                $("#account").removeClass('validatebox-invalid');
+            }
+            return flag;
+        },
+        message: '该手机号码已经被注册！'
+    },
+    checkEmail :{
+        validator : function(value,param){
+            var sysUser = {};
+            var flag ;
+            sysUser.account = value;
+            $.ajax({
+                url : '/checkEmail.do',
+                type : 'POST',
+                timeout : 60000,
+                data:sysUser,
+                async: false,
+                success : function(data, textStatus, jqXHR) {
+                    if (data == "0") {
+                        flag = true;
+                    }else{
+                        flag = false;
+                    }
+                }
+            });
+            if(flag){
+                $("#account").removeClass('validatebox-invalid');
+            }
+            return flag;
+        },
+        message: '该邮箱已经被注册！'
+    },
     radio: {
         validator: function (value, param) {
             var frm = param[0], groupname = param[1], ok = false;

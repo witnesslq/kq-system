@@ -302,11 +302,11 @@
       <version>20131018</version>
     </dependency>
 
-    <dependency>
+  <!--  <dependency>
       <groupId>opensymphony</groupId>
       <artifactId>oscache</artifactId>
       <version>2.4.1</version>
-    </dependency>
+    </dependency>-->
     <!--jerson -->
     <dependency>
       <groupId>com.sun.jersey</groupId>
@@ -321,6 +321,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
       </plugin>
     </plugins>
     <resources>
