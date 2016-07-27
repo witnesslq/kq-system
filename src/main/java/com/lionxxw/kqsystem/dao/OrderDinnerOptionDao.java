@@ -19,7 +19,7 @@ import java.util.List;
  * Created by wangjian@baofoo.com on 2016-07-27 14:48:24
  */
 @Repository
-public class OrderDinnerOptionDao extends MyBatisBaseDao<OrderDinnerOptionDto> {
+public class OrderDinnerOptionDao extends MyBatisBaseDao<OrderDinnerOption> {
 
     @Autowired
     @Getter
