@@ -3,6 +3,7 @@ package com.lionxxw.kqsystem.service.impl;
 import com.lionxxw.kqsystem.code.model.PageQuery;
 import com.lionxxw.kqsystem.code.model.PageResult;
 import com.lionxxw.kqsystem.code.utils.BeanUtils;
+import com.lionxxw.kqsystem.code.utils.DateUtils;
 import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.dao.OrderDinnerDao;
@@ -67,6 +68,17 @@ public class OrderDinnerServiceImpl implements OrderDinnerService {
             List<OrderDinner> datas = dao.queryByParam(obj, query);
             List<OrderDinnerDto> list = BeanUtils.createBeanListByTarget(datas, OrderDinnerDto.class);
             return new PageResult<OrderDinnerDto>(query, list);
+        }
+        return null;
+    }
+
+    @Override
+    public OrderDinnerDto getOrderDinnerByNow() throws Exception {
+        OrderDinnerDto dto = new OrderDinnerDto();
+        dto.setOrderDate(DateUtils.getJustDate(System.currentTimeMillis()));
+        List<OrderDinnerDto> orderDinnerDtos = queryByParam(dto);
+        if (ObjectUtils.notEmpty(orderDinnerDtos)){
+            return orderDinnerDtos.get(0);
         }
         return null;
     }

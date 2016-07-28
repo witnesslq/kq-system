@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +29,8 @@ public class OrderDinnerDto implements Serializable {
     private Date lastUpdateTime;
 
     private Date endTime;
+
+    private List<OrderDinnerOptionDto> options;
 
     public enum OrderState{
         INIT(0,"未发布"),PUBLISH(1, "已发布"),CANCEL(-1, "已作废"),FINISH(2, "已完成");

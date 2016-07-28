@@ -1,6 +1,7 @@
 package com.lionxxw.kqsystem.service;
 
 import com.lionxxw.kqsystem.code.base.BaseService;
+import com.lionxxw.kqsystem.code.base.ServiceException;
 import com.lionxxw.kqsystem.dto.OptionTemplateDto;
 import com.lionxxw.kqsystem.dto.OrderDinnerDto;
 
@@ -11,4 +12,10 @@ import com.lionxxw.kqsystem.dto.OrderDinnerDto;
  */
 public interface OrderDinnerService extends BaseService<OrderDinnerDto> {
 
+    /**
+     * 获取今日订餐
+     * @return
+     * @throws Exception
+     */
+    OrderDinnerDto getOrderDinnerByNow() throws Exception;
 }

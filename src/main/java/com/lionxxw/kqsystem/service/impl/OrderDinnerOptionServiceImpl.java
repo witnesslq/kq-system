@@ -71,4 +71,11 @@ public class OrderDinnerOptionServiceImpl implements OrderDinnerOptionService {
         }
         return null;
     }
+
+    @Override
+    public List<OrderDinnerOptionDto> queryOptionByOrderId(Long orderId) throws Exception {
+        OrderDinnerOptionDto dto = new OrderDinnerOptionDto();
+        dto.setOrderId(orderId);
+        return queryByParam(dto);
+    }
 }
