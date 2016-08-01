@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <#include "../../common/head.htm">
+    <script type="text/javascript" src="/skin/js/dateformat.js"></script>
+    <!--载入fckeditor类-->
+    <script type="text/javascript" src="/skin/fckeditor/fckeditor.js"></script>
+    <style type="text/css">
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+        .fitem label {
+            display: inline-block;
+            width: 100px;
+        }
+        .select_side p{
+            line-height: 12px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <form id="fm" method="post">
+        <input type="hidden" name="id" id="id" />
+        <div class="fitem">
+            <label>点餐日期</label>
+            <input name="orderDate" class="easyui-datebox" required="true" data-options="sharedCalendar:'#cc'" style="width:180px;" value="${(order.orderDate?string('yyyy-MM-dd'))!}"/>
+        </div>
+        <div class="fitem">
+            <label>截止时间</label>
+            <input name="end_time" class="easyui-timespinner" style="width:180px;">
+        </div>
+        <div class="fitem">
+            <label>点餐选项</label>
+            <table style="display: inline-block;">
+                <tr>
+                    <td>
+                        <div class="select_side">
+                            <p>已选</p>
+                            <select multiple size="5" name="list1">
+                                <#if order?? && order.options??>
+                                    <#list order.options as option>
+                                        <option value="${option.id}"> ${option.name} </option>
+                                    </#list>
+                                </#if>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="button" value=" >> " onclick="move(this.form.list1,this.form.list2)" name="B1">
+                        <input type="button" value=" << " onclick="move(this.form.list2,this.form.list1)" name="B2">
+                    </td>
+                    <td>
+                        <div class="select_side">
+                            <p>模板</p>
+                            <select multiple size="5" name="list2">
+                                <#if templates??>
+                                    <#list templates as template>
+                                        <option value="${template.id}"> ${template.name} </option>
+                                    </#list>
+                                </#if>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="fitem">
+            <label>备注</label>
+            <input name="note" class="easyui-vlidatebox" data-options="multiline:true" style="width:180px;height:60px" value="${(order.note)!}"/>
+        </div>
+    </form>
+    <div id="cc" class="easyui-calendar"></div>
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveData()" iconcls="icon-save">保存</a>
+    </div>
+</div>
+<script type="text/javascript" src="/skin/js/validate_ex.js"></script>
+<script>
+    function submitForm(){
+        $('#ff').form('submit',{
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                var jsondata = null;//eval('(' + data + ')');
+                if (data instanceof Object){
+                    jsondata = data;
+                }else{
+                    jsondata = eval('(' + data + ')');
+                }
+                if (jsondata.status == 200){
+                    $.messager.alert('操作提示', jsondata.message, 'info', function(){
+                        window.location.href = '/login.do';
+                    });
+                }else{
+                    $.messager.alert('操作提示', jsondata.message, 'error');
+                }
+            }
+        });
+    }
+    function clearForm(){
+        $('#ff').form('clear');
+    }
+    //<!-- Begin
+    sortitems = 1;  // Automatically sort items within lists? (1 or 0)
+    function move(fbox,tbox) {
+        for(var i=0; i<fbox.options.length; i++) {
+            if(fbox.options[i].selected && fbox.options[i].value != "") {
+                var no = new Option();
+                no.value = fbox.options[i].value;
+                no.text = fbox.options[i].text;
+                tbox.options[tbox.options.length] = no;
+                fbox.options[i].value = "";
+                fbox.options[i].text = "";
+            }
+        }
+        BumpUp(fbox);
+        if (sortitems) SortD(tbox);
+    }
+    function BumpUp(box)  {
+        for(var i=0; i<box.options.length; i++) {
+            if(box.options[i].value == "")  {
+                for(var j=i; j<box.options.length-1; j++)  {
+                    box.options[j].value = box.options[j+1].value;
+                    box.options[j].text = box.options[j+1].text;
+                }
+                var ln = i;
+                break;
+            }
+        }
+        if(ln < box.options.length)  {
+            box.options.length -= 1;
+            BumpUp(box);
+        }
+    }
+    function SortD(box)  {
+        var temp_opts = new Array();
+        var temp = new Object();
+        for(var i=0; i<box.options.length; i++)  {
+            temp_opts[i] = box.options[i];
+        }
+        for(var x=0; x<temp_opts.length-1; x++)  {
+            for(var y=(x+1); y<temp_opts.length; y++)  {
+                if(temp_opts[x].text > temp_opts[y].text)  {
+                    temp = temp_opts[x].text;
+                    temp_opts[x].text = temp_opts[y].text;
+                    temp_opts[y].text = temp;
+                    temp = temp_opts[x].value;
+                    temp_opts[x].value = temp_opts[y].value;
+                    temp_opts[y].value = temp;
+                }
+            }
+        }
+        for(var i=0; i<box.options.length; i++)  {
+            box.options[i].value = temp_opts[i].value;
+            box.options[i].text = temp_opts[i].text;
+        }
+    }
+    // End -->
+</script>
+</body>
+</html>

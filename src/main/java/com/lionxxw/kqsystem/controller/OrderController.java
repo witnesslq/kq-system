@@ -1,7 +1,10 @@
 package com.lionxxw.kqsystem.controller;
 
+import com.lionxxw.kqsystem.code.utils.ObjectUtils;
+import com.lionxxw.kqsystem.dto.OptionTemplateDto;
 import com.lionxxw.kqsystem.dto.OrderDinnerDto;
 import com.lionxxw.kqsystem.dto.OrderDinnerOptionDto;
+import com.lionxxw.kqsystem.service.OptionTemplateService;
 import com.lionxxw.kqsystem.service.OrderDinnerOptionService;
 import com.lionxxw.kqsystem.service.OrderDinnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,11 +29,16 @@ public class OrderController extends KqsController {
     private OrderDinnerService orderDinnerService;
     @Autowired
     private OrderDinnerOptionService optionService;
+    @Autowired
+    private OptionTemplateService optionTemplateService;
 
     @RequestMapping(value = "/order/publish")
     public ModelAndView publish() throws Exception{
         ModelAndView mv = new ModelAndView();
-        mv.addObject("order", getNowDateOrder());
+        OrderDinnerDto order = getNowDateOrder();
+        List<OptionTemplateDto> templates = getOtherOptions(order);
+        mv.addObject("order", order);
+        mv.addObject("templates", templates);
         mv.setViewName("/kqs/order/publish");
         return mv;
     }
@@ -55,5 +64,25 @@ public class OrderController extends KqsController {
             nowOrder.setOptions(options);
         }
         return nowOrder;
+    }
+
+    /**
+     * 过滤已经选择的选项
+     * @param order
+     * @return
+     * @throws Exception
+     */
+    private List<OptionTemplateDto> getOtherOptions(OrderDinnerDto order) throws Exception {
+        List<OptionTemplateDto> templates = optionTemplateService.queryByParam(null);
+        if (ObjectUtils.notEmpty(templates) && ObjectUtils.notEmpty(order.getOptions())){
+            Iterator<OptionTemplateDto> iterator = templates.iterator();
+            while (iterator.hasNext()){
+                OptionTemplateDto next = iterator.next();
+                if (order.getOptions().contains(next)){
+                    iterator.remove();
+                }
+            }
+        }
+        return templates;
     }
 }
