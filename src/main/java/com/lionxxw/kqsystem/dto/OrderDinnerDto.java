@@ -3,6 +3,7 @@ package com.lionxxw.kqsystem.dto;
 import com.lionxxw.kqsystem.code.utils.DateUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.code.utils.StringUtils;
+import com.lionxxw.kqsystem.entity.OptionTemplate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -90,6 +91,10 @@ public class OrderDinnerDto implements Serializable {
 
     @Getter
     @Setter
+    private List<OptionTemplateDto> temps;
+
+    @Getter
+    @Setter
     private Long[] tempIds;
 
     public enum OrderState{
@@ -110,6 +115,22 @@ public class OrderDinnerDto implements Serializable {
                 }
             }
             return "";
+        }
+
+        public int getState() {
+            return state;
+        }
+
+        public void setState(int state) {
+            this.state = state;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
         }
     }
 }

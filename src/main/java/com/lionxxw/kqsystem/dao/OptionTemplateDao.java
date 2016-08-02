@@ -10,6 +10,7 @@ import com.lionxxw.kqsystem.entity.OptionTemplate;
 import com.lionxxw.kqsystem.entity.OptionTemplateExample;
 import com.lionxxw.kqsystem.entity.WorkingLog;
 import com.lionxxw.kqsystem.entity.WorkingLogExample;
+import com.lionxxw.kqsystem.mapper.OptionTemplateExMapper;
 import com.lionxxw.kqsystem.mapper.OptionTemplateMapper;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class OptionTemplateDao extends MyBatisBaseDao<OptionTemplate> {
     @Autowired
     @Getter
     private OptionTemplateMapper mapper;
+
+    private OptionTemplateExMapper exMapper;
 
     public List<OptionTemplate> queryByParam(OptionTemplateDto obj, PageQuery query) throws Exception{
         OptionTemplateExample example = new OptionTemplateExample();
@@ -72,5 +75,21 @@ public class OptionTemplateDao extends MyBatisBaseDao<OptionTemplate> {
         OptionTemplateExample.Criteria criteria = example.createCriteria();
         criteria.andIdIn(Arrays.asList(ids));
         mapper.deleteByExample(example);
+    }
+
+    public void addCount(Long tempId) throws Exception{
+        exMapper.addCount(tempId);
+    }
+
+    public void subCount(Long tempId) throws Exception{
+        exMapper.subCount(tempId);
+    }
+
+    public void addCountByOptionId(Long optionId) throws Exception{
+        exMapper.addCountByOptionId(optionId);
+    }
+
+    public void subCountByOptionId(Long optionId) throws Exception{
+        exMapper.subCountByOptionId(optionId);
     }
 }

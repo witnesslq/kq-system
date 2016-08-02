@@ -29,6 +29,8 @@ public class UserOrderResultDto implements Serializable {
 
     private Boolean isAppend;
 
+    private Long tempId;
+
     public enum ResultState{
         confirm(1, "已点"),cancel(-1, "取消");
         private int state;

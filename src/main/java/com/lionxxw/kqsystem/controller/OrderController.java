@@ -10,6 +10,7 @@ import com.lionxxw.kqsystem.mode.LoginUser;
 import com.lionxxw.kqsystem.service.OptionTemplateService;
 import com.lionxxw.kqsystem.service.OrderDinnerOptionService;
 import com.lionxxw.kqsystem.service.OrderDinnerService;
+import com.lionxxw.kqsystem.service.UserOrderResultService;
 import com.lionxxw.kqsystem.utils.ExportExcelUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -43,6 +44,8 @@ public class OrderController extends KqsController {
     private OrderDinnerOptionService optionService;
     @Autowired
     private OptionTemplateService optionTemplateService;
+    @Autowired
+    private UserOrderResultService userOrderResultService;
 
     @RequestMapping(value = "/order/publish", method = RequestMethod.GET)
     public ModelAndView publish() throws Exception{
@@ -53,6 +56,53 @@ public class OrderController extends KqsController {
         mv.addObject("templates", templates);
         mv.setViewName("/kqs/order/publish");
         return mv;
+    }
+
+    /**
+     * 确认发布
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/order/confirmPublish")
+    public void confirmPublish(HttpServletRequest request, HttpServletResponse response, Long id) throws Exception{
+        Response<String> res = new Response<String>();
+        OrderDinnerDto order = orderDinnerService.getById(id);
+        order.setState(OrderDinnerDto.OrderState.PUBLISH.getState());
+        LoginUser loginUser = getLoginUser(request);
+        order.setPublishUserId(loginUser.getId());
+        order.setPublishTime(new Date());
+        try {
+            orderDinnerService.update(order);
+            res.setMessage("恭喜您发布成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.setStatus(DataStatus.HTTP_FAILE);
+            res.setMessage(e.getMessage());
+        }
+        ResponseUtils.renderJson(response, res);
+    }
+
+    /**
+     * 取消发布
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/order/cancelPublish")
+    public void cancelPublish(HttpServletRequest request, HttpServletResponse response, Long id) throws Exception{
+        Response<String> res = new Response<String>();
+        OrderDinnerDto order = orderDinnerService.getById(id);
+        order.setState(OrderDinnerDto.OrderState.CANCEL.getState());
+        try {
+            orderDinnerService.update(order);
+            res.setMessage("恭喜您作废成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.setStatus(DataStatus.HTTP_FAILE);
+            res.setMessage(e.getMessage());
+        }
+        ResponseUtils.renderJson(response, res);
     }
 
     @RequestMapping(value = "/order/publish", method = RequestMethod.POST)
@@ -138,7 +188,7 @@ public class OrderController extends KqsController {
      */
     @RequestMapping(value = "/order/editTemplate", method = RequestMethod.POST)
     public void editTemplate(HttpServletRequest request, HttpServletResponse response, OptionTemplateDto dto){
-        Response<OptionTemplateDto> res = new Response<OptionTemplateDto>();
+        Response<Object> res = new Response<Object>();
         LoginUser loginUser = getLoginUser(request);
         dto.setLastUpdateUserId(loginUser.getId());
         dto.setLastUpdateTime(new Date());
@@ -162,7 +212,7 @@ public class OrderController extends KqsController {
      */
     @RequestMapping(value = "/order/delTemplate")
     public void delTemplate(HttpServletRequest request, HttpServletResponse response, Long[] ids){
-        Response<PageResult<WorkingLogDto>> res = new Response<PageResult<WorkingLogDto>>();
+        Response<Object> res = new Response<Object>();
         try {
             optionTemplateService.batchDelTemplate(ids);
             res.setMessage("删除工作日志成功!");
@@ -174,12 +224,61 @@ public class OrderController extends KqsController {
         ResponseUtils.renderJson(response, res);
     }
 
-    @RequestMapping(value = "/order/now")
+    /**
+     * 今日订餐
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/order/now", method = RequestMethod.GET)
     public ModelAndView now() throws Exception{
         ModelAndView mv = new ModelAndView();
-        mv.addObject("order", getNowDateOrder());
+        OrderDinnerDto nowDateOrder = getNowDateOrder();
+        if (nowDateOrder.getState() == OrderDinnerDto.OrderState.PUBLISH.getState()){
+            getOtherOptions(nowDateOrder);
+            mv.addObject("order", nowDateOrder);
+            UserOrderResultDto result =  userOrderResultService.getResultByOrderId(nowDateOrder.getId());
+            if (ObjectUtils.notNull(result) && result.getState() == 1){
+                mv.addObject("result", result);
+            }
+        }
         mv.setViewName("/kqs/order/now");
         return mv;
+    }
+
+    /**
+     * 今日订餐报名
+     * @param request
+     * @param response
+     * @param dto
+     * @throws Exception
+     */
+    @RequestMapping(value = "/order/now", method = RequestMethod.POST)
+    public void now(HttpServletRequest request, HttpServletResponse response, UserOrderResultDto dto) throws Exception{
+        Response<Object> res = new Response<Object>();
+        LoginUser loginUser = getLoginUser(request);
+        dto.setUserId(loginUser.getId());
+        dto.setUserCname(loginUser.getCname());
+        dto.setUserEname(loginUser.getEname());
+        try {
+            UserOrderResultDto result =  userOrderResultService.getResultByOrderId(dto.getOrderId());
+            String msg = "报名";
+            if (ObjectUtils.notNull(result) && result.getState() == 1){
+                result.setOptionId(dto.getOptionId());
+                result.setState(result.getState()*-1);
+                if (result.getState() == -1){
+                    msg = "退订";
+                }
+                userOrderResultService.update(result);
+            }else{
+                userOrderResultService.save(dto);
+            }
+            res.setMessage("恭喜您"+msg+"成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.setStatus(DataStatus.HTTP_FAILE);
+            res.setMessage(e.getMessage());
+        }
+        ResponseUtils.renderJson(response, res);
     }
 
     private OrderDinnerDto getNowDateOrder() throws Exception {

@@ -79,7 +79,14 @@
     </form>
     <div id="cc" class="easyui-calendar"></div>
     <div id="dlg-buttons">
-        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">保存</a>
+        <#if order??>
+            <#if order.state == 0>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="publish(${(order.id)!})" iconcls="icon-ok">发布</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="cancel(${(order.id)!})" iconcls="icon-no">作废</a>
+            </#if>
+        <#else>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">保存</a>
+        </#if>
     </div>
 </div>
 <div id="dlg2" class="easyui-dialog" style="width: 1000px; height: 600px; padding: 10px 20px;"
@@ -98,6 +105,7 @@
 </div>
 <script type="text/javascript" src="/skin/js/validate_ex.js"></script>
 <script>
+    var url = '';
     var clickFun = null;
     function myDblClick(obj) {
         clearTimeout(clickFun);
@@ -106,6 +114,39 @@
     }
     function initFck(){
         $("#fck_editer").html('<label>内容</label><textarea rows="10" cols="10" id="fck_note" name="note" required="true"></textarea>');
+    }
+    function publish(id){
+        url = "/kqs/order/confirmPublish.do";
+        ajaxRequest(id);
+    }
+
+    function cancel(id){
+        url = "/kqs/order/cancelPublish.do";
+        ajaxRequest(id);
+    }
+
+    function ajaxRequest(id){
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {id:id},
+            dataType: "json",
+            success: function(data){
+                var jsondata = null;//eval('(' + data + ')');
+                if (data instanceof Object){
+                    jsondata = data;
+                }else{
+                    jsondata = eval('(' + data + ')');
+                }
+                if (jsondata.status == 200){
+                    $.messager.alert('操作提示', jsondata.message, 'info', function(){
+                        window.location.reload();
+                    });
+                }else{
+                    $.messager.alert('操作提示', jsondata.message, 'error');
+                }
+            }
+        });
     }
     function editData(id) {
         //console.log(row);

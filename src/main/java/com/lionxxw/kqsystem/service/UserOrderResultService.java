@@ -11,4 +11,11 @@ import com.lionxxw.kqsystem.dto.UserOrderResultDto;
  */
 public interface UserOrderResultService extends BaseService<UserOrderResultDto> {
 
+    /**
+     * 根据订单id查询用户点餐记录
+     * @param orderId
+     * @return
+     * @throws Exception
+     */
+    UserOrderResultDto getResultByOrderId(Long orderId) throws Exception;
 }

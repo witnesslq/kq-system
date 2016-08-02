@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -58,6 +59,7 @@ public class OrderDinnerServiceImpl implements OrderDinnerService {
         ExceptionUtils.checkObjIsNull(obj);
         ExceptionUtils.checkIdIsNull(obj.getId(), OrderDinner.class, "update");
         OrderDinner data = BeanUtils.createBeanByTarget(obj, OrderDinner.class);
+        data.setLastUpdateTime(new Date());
         dao.updateByPrimaryKeySelective(data);
     }
 
