@@ -62,7 +62,7 @@ public class WorkingLogDao extends MyBatisBaseDao<WorkingLog> {
                 criteria.andWorkDateGreaterThanOrEqualTo(DateUtils.getDate(params.getWorkDateS(), DateUtils.DATE_FROMAT_DAY));
             }
             if (StringUtils.notTrimEmpty(params.getWorkDateE())){
-                criteria.andWorkDateLessThanOrEqualTo(DateUtils.getDate(params.getWorkDateE(), DateUtils.DATE_FROMAT_DAY));
+                criteria.andWorkDateLessThan(DateUtils.getDate(params.getWorkDateE(), DateUtils.DATE_FROMAT_DAY, 1));
             }
         }
         criteria.andIsDelEqualTo(false);

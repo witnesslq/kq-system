@@ -18,6 +18,10 @@
         .select_side p{
             line-height: 12px;
         }
+        .select_side select{
+            min-width: 130px;
+            min-height: 150px;
+        }
     </style>
 </head>
 <body>
@@ -39,7 +43,7 @@
                     <td>
                         <div class="select_side">
                             <p>已选</p>
-                            <select multiple size="5" name="list1">
+                            <select multiple size="5" name="list1" ondblclick="myDblClick(this);">
                                 <#if order?? && order.options??>
                                     <#list order.options as option>
                                         <option value="${option.id}"> ${option.name} </option>
@@ -55,7 +59,7 @@
                     <td>
                         <div class="select_side">
                             <p>模板</p>
-                            <select multiple size="5" name="list2">
+                            <select multiple size="5" name="list2" ondblclick="myDblClick(this);">
                                 <#if templates??>
                                     <#list templates as template>
                                         <option value="${template.id}"> ${template.name} </option>
@@ -77,10 +81,68 @@
         <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveData()" iconcls="icon-save">保存</a>
     </div>
 </div>
+<div id="dlg2" class="easyui-dialog" style="width: 1000px; height: 600px; padding: 10px 20px;"
+     closed="true" buttons="#dlg2-buttons">
+    <form id="fm2" method="post">
+        <input type="hidden" name="id"/>
+        <div class="fitem">
+            <label>内容</label>
+            <textarea rows="10" cols="10" id="fck_note" name="note" required="true"></textarea>
+        </div>
+    </form>
+</div>
+<div id="dlg2-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="editTemp()" iconcls="icon-save">修改</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg2').dialog('close')" iconcls="icon-cancel">取消</a>
+</div>
 <script type="text/javascript" src="/skin/js/validate_ex.js"></script>
 <script>
+    var clickFun = null;
+    function myDblClick(obj) {
+        clearTimeout(clickFun);
+        editData(obj.value);
+        //alert("双击事件：值为" + obj.value);
+    }
+    function editData(id) {
+        //console.log(row);
+        $("#dlg2").dialog("open").dialog('setTitle', '编辑选项模板');
+        openFck();
+        $('#fm2').form('clear');
+        $("#fm2").form("load", "/kqs/order/editTemplate.do?id=" + id);
+        url = "/kqs/order/editTemplate.do";
+    }
+    function editTemp() {
+        $("#fm2").form("submit", {
+            url: url,
+            onsubmit: function () {
+                return $(this).form("validate");
+            },
+            success: function (data) {
+                var jsondata = null;//eval('(' + data + ')');
+                if (data instanceof Object){
+                    jsondata = data;
+                }else{
+                    jsondata = eval('(' + data + ')');
+                }
+                if (jsondata.status == 200){
+                    $.messager.alert('操作提示', jsondata.message, 'info', function(){
+                        $("#dlg2").dialog("close");
+                    });
+                }else{
+                    $.messager.alert('操作提示', jsondata.message, 'error');
+                }
+            }
+        });
+    }
+    function openFck(){
+        var fck = new FCKeditor("fck_note");
+        fck.BasePath = "/skin/fckeditor/";
+        fck.Height = 400 ;
+        fck.Config["ImageUploadURL"] = "/api/upload/uploadFck.do"; // 配置fck上传url
+        fck.ReplaceTextarea();
+    }
     function submitForm(){
-        $('#ff').form('submit',{
+        $('#fm').form('submit',{
             onSubmit:function(){
                 return $(this).form('validate');
             },
@@ -102,7 +164,7 @@
         });
     }
     function clearForm(){
-        $('#ff').form('clear');
+        $('#fm').form('clear');
     }
     //<!-- Begin
     sortitems = 1;  // Automatically sort items within lists? (1 or 0)

@@ -70,4 +70,9 @@ public class OptionTemplateServiceImpl implements OptionTemplateService {
         }
         return null;
     }
+
+    @Override
+    public void batchDelTemplate(Long[] ids) throws Exception {
+        dao.batchDelTemplate(ids);
+    }
 }

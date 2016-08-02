@@ -13,6 +13,7 @@ import java.util.Date;
 public abstract class DateUtils {
     public static final String DATE_FROMAT_DAY = "yyyy-MM-dd";
     public static final String DATE_FROMAT_SS = "yyyy-MM-dd HH:mm:ss";
+    public static final long DAY_TIME = 86400000L; // 一天的时间 单位 毫秒
 
     public static Date getDate(String s) {
         return getDate(s, null);
@@ -46,6 +47,29 @@ public abstract class DateUtils {
             }
 
             date = new SimpleDateFormat(format).parse(s);
+        } catch (Exception e) {
+            date = new Date(0L);
+        }
+
+        return date;
+    }
+
+    /**
+     * 在该时间基础上加/减几天
+     * @param s
+     * @param format
+     * @param n 在该时间基础上加(1)/减(-1)n天
+     * @return
+     */
+    public static Date getDate(String s, String format, int n){
+        Date date;
+        try {
+            if (StringUtils.isEmpty(format)) {
+                format = DATE_FROMAT_SS;
+            }
+
+            date = new SimpleDateFormat(format).parse(s);
+            date = new Date(date.getTime() + n*DAY_TIME);
         } catch (Exception e) {
             date = new Date(0L);
         }

@@ -11,4 +11,5 @@ import com.lionxxw.kqsystem.dto.OvertimeDto;
  */
 public interface OptionTemplateService extends BaseService<OptionTemplateDto> {
 
+    void batchDelTemplate(Long[] ids) throws Exception;
 }

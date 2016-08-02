@@ -23,4 +23,10 @@ public class OptionTemplateDto implements Serializable {
     private Long lastUpdateUserId;
 
     private String note;
+
+    private Integer count;
+
+    private String createTimeS; // 格式 yyyy-MM-dd
+
+    private String createTimeE;
 }
