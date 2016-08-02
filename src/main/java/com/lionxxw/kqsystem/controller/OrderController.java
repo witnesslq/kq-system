@@ -5,10 +5,7 @@ import com.lionxxw.kqsystem.code.model.*;
 import com.lionxxw.kqsystem.code.utils.DateUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.code.utils.ResponseUtils;
-import com.lionxxw.kqsystem.dto.OptionTemplateDto;
-import com.lionxxw.kqsystem.dto.OrderDinnerDto;
-import com.lionxxw.kqsystem.dto.OrderDinnerOptionDto;
-import com.lionxxw.kqsystem.dto.WorkingLogDto;
+import com.lionxxw.kqsystem.dto.*;
 import com.lionxxw.kqsystem.mode.LoginUser;
 import com.lionxxw.kqsystem.service.OptionTemplateService;
 import com.lionxxw.kqsystem.service.OrderDinnerOptionService;
@@ -47,7 +44,7 @@ public class OrderController extends KqsController {
     @Autowired
     private OptionTemplateService optionTemplateService;
 
-    @RequestMapping(value = "/order/publish")
+    @RequestMapping(value = "/order/publish", method = RequestMethod.GET)
     public ModelAndView publish() throws Exception{
         ModelAndView mv = new ModelAndView();
         OrderDinnerDto order = getNowDateOrder();
@@ -56,6 +53,22 @@ public class OrderController extends KqsController {
         mv.addObject("templates", templates);
         mv.setViewName("/kqs/order/publish");
         return mv;
+    }
+
+    @RequestMapping(value = "/order/publish", method = RequestMethod.POST)
+    public void publish(HttpServletRequest request, HttpServletResponse response, OrderDinnerDto dto) throws Exception{
+        Response<String> res = new Response<String>();
+        LoginUser loginUser = getLoginUser(request);
+        dto.setCreateUserId(loginUser.getId());
+        try {
+            orderDinnerService.save(dto);
+            res.setMessage("创建今日订餐成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.setStatus(DataStatus.HTTP_FAILE);
+            res.setMessage(e.getMessage());
+        }
+        ResponseUtils.renderJson(response, res);
     }
 
     @RequestMapping(value = "/order/template")

@@ -13,21 +13,7 @@ public class OrderDinnerOptionDto implements Serializable {
 
     private Long orderId;
 
-    private String tempId;
+    private Long tempId;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OrderDinnerOptionDto that = (OrderDinnerOptionDto) o;
-
-        return !(id != null ? !id.equals(that.id) : that.id != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
+    private String name;
 }

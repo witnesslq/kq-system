@@ -26,15 +26,15 @@
 </head>
 <body>
 <div>
-    <form id="fm" method="post">
+    <form id="fm" method="post" action="/kqs/order/publish.do">
         <input type="hidden" name="id" id="id" />
         <div class="fitem">
             <label>点餐日期</label>
-            <input name="orderDate" class="easyui-datebox" required="true" data-options="sharedCalendar:'#cc'" style="width:180px;" value="${(order.orderDate?string('yyyy-MM-dd'))!}"/>
+            <input name="orderDateStr" class="easyui-datebox" required="true" data-options="sharedCalendar:'#cc'" style="width:180px;" value="${(order.orderDate?string('yyyy-MM-dd'))!}"/>
         </div>
         <div class="fitem">
             <label>截止时间</label>
-            <input name="end_time" class="easyui-timespinner" style="width:180px;">
+            <input name="endTimeStr" class="easyui-timespinner" style="width:180px;" value="${(order.endTimeStr)!}">
         </div>
         <div class="fitem">
             <label>点餐选项</label>
@@ -42,11 +42,12 @@
                 <tr>
                     <td>
                         <div class="select_side">
+                            <input type="hidden" name="tempIds" id="tempIds">
                             <p>已选</p>
-                            <select multiple size="5" name="list1" ondblclick="myDblClick(this);">
+                            <select multiple size="5" name="list1" id="list1" ondblclick="myDblClick(this);">
                                 <#if order?? && order.options??>
                                     <#list order.options as option>
-                                        <option value="${option.id}"> ${option.name} </option>
+                                        <option value="${(option.id)!}">${(option.name)!} </option>
                                     </#list>
                                 </#if>
                             </select>
@@ -78,14 +79,14 @@
     </form>
     <div id="cc" class="easyui-calendar"></div>
     <div id="dlg-buttons">
-        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveData()" iconcls="icon-save">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">保存</a>
     </div>
 </div>
 <div id="dlg2" class="easyui-dialog" style="width: 1000px; height: 600px; padding: 10px 20px;"
      closed="true" buttons="#dlg2-buttons">
     <form id="fm2" method="post">
         <input type="hidden" name="id"/>
-        <div class="fitem">
+        <div class="fitem" id="fck_editer">
             <label>内容</label>
             <textarea rows="10" cols="10" id="fck_note" name="note" required="true"></textarea>
         </div>
@@ -103,12 +104,16 @@
         editData(obj.value);
         //alert("双击事件：值为" + obj.value);
     }
+    function initFck(){
+        $("#fck_editer").html('<label>内容</label><textarea rows="10" cols="10" id="fck_note" name="note" required="true"></textarea>');
+    }
     function editData(id) {
         //console.log(row);
         $("#dlg2").dialog("open").dialog('setTitle', '编辑选项模板');
-        openFck();
         $('#fm2').form('clear');
+        initFck();
         $("#fm2").form("load", "/kqs/order/editTemplate.do?id=" + id);
+        openFck();
         url = "/kqs/order/editTemplate.do";
     }
     function editTemp() {
@@ -142,6 +147,8 @@
         fck.ReplaceTextarea();
     }
     function submitForm(){
+        var str = $("#list1 option").map(function(){return $(this).val();}).get().join(", ")
+        $("#tempIds").val(str);
         $('#fm').form('submit',{
             onSubmit:function(){
                 return $(this).form('validate');
@@ -155,7 +162,7 @@
                 }
                 if (jsondata.status == 200){
                     $.messager.alert('操作提示', jsondata.message, 'info', function(){
-                        window.location.href = '/login.do';
+                        window.location.reload();
                     });
                 }else{
                     $.messager.alert('操作提示', jsondata.message, 'error');

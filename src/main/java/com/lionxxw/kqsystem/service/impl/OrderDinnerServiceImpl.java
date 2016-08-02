@@ -7,11 +7,14 @@ import com.lionxxw.kqsystem.code.utils.DateUtils;
 import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.dao.OrderDinnerDao;
+import com.lionxxw.kqsystem.dao.OrderDinnerOptionDao;
 import com.lionxxw.kqsystem.dto.OrderDinnerDto;
 import com.lionxxw.kqsystem.entity.OrderDinner;
+import com.lionxxw.kqsystem.entity.OrderDinnerOption;
 import com.lionxxw.kqsystem.service.OrderDinnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,12 +23,25 @@ public class OrderDinnerServiceImpl implements OrderDinnerService {
 
     @Autowired
     private OrderDinnerDao dao;
+    @Autowired
+    private OrderDinnerOptionDao optionDao;
 
+    @Transactional
     public OrderDinnerDto save(OrderDinnerDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
         OrderDinner data = BeanUtils.createBeanByTarget(obj, OrderDinner.class);
         dao.insertSelective(data);
         obj.setId(data.getId());
+        Long[] tempIds = obj.getTempIds();
+        if (ObjectUtils.notEmpty(tempIds)){
+            OrderDinnerOption option;
+            for (Long tempId : tempIds){
+                option = new OrderDinnerOption();
+                option.setOrderId(data.getId());
+                option.setTempId(tempId);
+                optionDao.insertSelective(option);
+            }
+        }
         return obj;
     }
 

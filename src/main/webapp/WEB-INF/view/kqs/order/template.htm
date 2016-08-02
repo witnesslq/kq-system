@@ -48,7 +48,7 @@
             <label>标题</label>
             <input name="name" class="easyui-validatebox" required="true"  style="width:180px;"/>
         </div>
-        <div class="fitem">
+        <div class="fitem" id="fck_editer">
             <label>内容</label>
             <textarea rows="10" cols="10" id="note" name="note" required="true"></textarea>
         </div>
@@ -105,21 +105,26 @@
             striped: true // 显示斑马线效果
         });
     });
+    function initFck(){
+        $("#fck_editer").html('<label>内容</label><textarea rows="10" cols="10" id="note" name="note" required="true"></textarea>');
+    }
     var url;
     var type;
     function newData() {
         $("#dlg").dialog("open").dialog('setTitle', '新增选项模板');
-        openFck();
         $("#fm").form("clear");
+        initFck();
+        openFck();
         url = "/kqs/order/addTemplate.do";
     }
     function editData(row) {
         //console.log(row);
         if (row) {
             $("#dlg").dialog("open").dialog('setTitle', '编辑选项模板');
-            openFck();
-            $('#ff').form('clear');
+            $('#fm').form('clear');
+            initFck();
             $("#fm").form("load", "/kqs/order/editTemplate.do?id=" + row.id);
+            openFck();
             url = "/kqs/order/editTemplate.do";
         }
     }
