@@ -11,6 +11,9 @@
             margin: 0;
             padding: 10px 30px;
         }
+        .fitem{
+            margin: 5px 5px 0;
+        }
         .fitem label {
             display: inline-block;
             width: 100px;
@@ -44,7 +47,12 @@
     </form>
     <div id="dlg-buttons">
         <#if result??>
-            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save"><#if result.state == 1>退订</#if><#if result.state == -1>报名</#if></a>
+            <#if result.state == 1>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-undo">退订</a>
+            </#if>
+            <#if result.state == -1>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">报名</a>
+            </#if>
         <#else>
             <#if order?? && order.state == 1>
                 <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">报名</a>
