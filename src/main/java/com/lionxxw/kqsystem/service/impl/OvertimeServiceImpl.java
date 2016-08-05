@@ -6,12 +6,14 @@ import com.lionxxw.kqsystem.code.utils.BeanUtils;
 import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.dao.OvertimeDao;
+import com.lionxxw.kqsystem.db.DataSource;
 import com.lionxxw.kqsystem.dto.OvertimeDto;
 import com.lionxxw.kqsystem.entity.Overtime;
 import com.lionxxw.kqsystem.service.OvertimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,6 +24,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     public OvertimeDto save(OvertimeDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
+        obj.setCreateTime(new Date());
         Overtime Overtime = BeanUtils.createBeanByTarget(obj, Overtime.class);
         overtimeDao.insertSelective(Overtime);
         obj.setId(Overtime.getId());
@@ -41,9 +44,11 @@ public class OvertimeServiceImpl implements OvertimeService {
         ExceptionUtils.checkObjIsNull(obj);
         ExceptionUtils.checkIdIsNull(obj.getId(), Overtime.class, "update");
         Overtime overtime = BeanUtils.createBeanByTarget(obj, Overtime.class);
+        overtime.setLastUpdateTime(new Date());
         overtimeDao.updateByPrimaryKeySelective(overtime);
     }
 
+    @DataSource(name = DataSource.read)
     public OvertimeDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, Overtime.class, "getById");
         Overtime overtime = overtimeDao.selectByPrimaryKey(id);
@@ -51,6 +56,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         return dto;
     }
 
+    @DataSource(name = DataSource.read)
     public List<OvertimeDto> queryByParam(OvertimeDto obj) throws Exception {
         List<Overtime> overtimes = overtimeDao.queryByParam(obj, null);
         if (ObjectUtils.notEmpty(overtimes)){
@@ -60,6 +66,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         return null;
     }
 
+    @DataSource(name = DataSource.read)
     public PageResult<OvertimeDto> queryByPage(OvertimeDto obj, PageQuery query) throws Exception {
         int total = overtimeDao.countByParam(obj);
         if (total > 0){

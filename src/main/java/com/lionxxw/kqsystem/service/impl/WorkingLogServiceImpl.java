@@ -6,12 +6,14 @@ import com.lionxxw.kqsystem.code.utils.BeanUtils;
 import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.dao.WorkingLogDao;
+import com.lionxxw.kqsystem.db.DataSource;
 import com.lionxxw.kqsystem.dto.WorkingLogDto;
 import com.lionxxw.kqsystem.entity.WorkingLog;
 import com.lionxxw.kqsystem.service.WorkingLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,6 +24,7 @@ public class WorkingLogServiceImpl implements WorkingLogService {
 
     public WorkingLogDto save(WorkingLogDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
+        obj.setCreateTime(new Date());
         WorkingLog workingLog = BeanUtils.createBeanByTarget(obj, WorkingLog.class);
         workingLogDao.insertSelective(workingLog);
         obj.setId(workingLog.getId());
@@ -41,9 +44,11 @@ public class WorkingLogServiceImpl implements WorkingLogService {
         ExceptionUtils.checkObjIsNull(obj);
         ExceptionUtils.checkIdIsNull(obj.getId(), WorkingLog.class, "update");
         WorkingLog workingLog = BeanUtils.createBeanByTarget(obj, WorkingLog.class);
+        workingLog.setLastUpdateTime(new Date());
         workingLogDao.updateByPrimaryKeySelective(workingLog);
     }
 
+    @DataSource(name = DataSource.read)
     public WorkingLogDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, WorkingLog.class, "getById");
         WorkingLog workingLog = workingLogDao.selectByPrimaryKey(id);
@@ -51,6 +56,7 @@ public class WorkingLogServiceImpl implements WorkingLogService {
         return dto;
     }
 
+    @DataSource(name = DataSource.read)
     public List<WorkingLogDto> queryByParam(WorkingLogDto obj) throws Exception {
         List<WorkingLog> workingLogs = workingLogDao.queryByParam(obj, null);
         if (ObjectUtils.notEmpty(workingLogs)){
@@ -60,6 +66,7 @@ public class WorkingLogServiceImpl implements WorkingLogService {
         return null;
     }
 
+    @DataSource(name = DataSource.read)
     public PageResult<WorkingLogDto> queryByPage(WorkingLogDto obj, PageQuery query) throws Exception {
         int total = workingLogDao.countByParam(obj);
         if (total > 0){
@@ -75,6 +82,7 @@ public class WorkingLogServiceImpl implements WorkingLogService {
         workingLogDao.batchDelWorkingLog(ids);
     }
 
+    @DataSource(name = DataSource.read)
     public List<WorkingLogDto> queryFullWorkingLog(WorkingLogDto param) throws Exception {
         List<WorkingLog> workingLogs = workingLogDao.queryFullWorkingLog(param);
         if (ObjectUtils.notEmpty(workingLogs)){

@@ -8,6 +8,7 @@ import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.dao.OrderDinnerDao;
 import com.lionxxw.kqsystem.dao.OrderDinnerOptionDao;
+import com.lionxxw.kqsystem.db.DataSource;
 import com.lionxxw.kqsystem.dto.OrderDinnerDto;
 import com.lionxxw.kqsystem.entity.OrderDinner;
 import com.lionxxw.kqsystem.entity.OrderDinnerOption;
@@ -30,6 +31,7 @@ public class OrderDinnerServiceImpl implements OrderDinnerService {
     @Transactional
     public OrderDinnerDto save(OrderDinnerDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
+        obj.setCreateTime(new Date());
         OrderDinner data = BeanUtils.createBeanByTarget(obj, OrderDinner.class);
         dao.insertSelective(data);
         obj.setId(data.getId());
@@ -63,6 +65,7 @@ public class OrderDinnerServiceImpl implements OrderDinnerService {
         dao.updateByPrimaryKeySelective(data);
     }
 
+    @DataSource(name = DataSource.read)
     public OrderDinnerDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, OrderDinner.class, "getById");
         OrderDinner data = dao.selectByPrimaryKey(id);
@@ -70,6 +73,7 @@ public class OrderDinnerServiceImpl implements OrderDinnerService {
         return dto;
     }
 
+    @DataSource(name = DataSource.read)
     public List<OrderDinnerDto> queryByParam(OrderDinnerDto obj) throws Exception {
         List<OrderDinner> datas = dao.queryByParam(obj, null);
         if (ObjectUtils.notEmpty(datas)){
@@ -79,6 +83,7 @@ public class OrderDinnerServiceImpl implements OrderDinnerService {
         return null;
     }
 
+    @DataSource(name = DataSource.read)
     public PageResult<OrderDinnerDto> queryByPage(OrderDinnerDto obj, PageQuery query) throws Exception {
         int total = dao.countByParam(obj);
         if (total > 0){

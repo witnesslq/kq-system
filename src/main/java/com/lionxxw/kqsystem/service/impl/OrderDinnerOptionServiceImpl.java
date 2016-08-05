@@ -6,9 +6,9 @@ import com.lionxxw.kqsystem.code.utils.BeanUtils;
 import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.dao.OrderDinnerOptionDao;
+import com.lionxxw.kqsystem.db.DataSource;
 import com.lionxxw.kqsystem.dto.OrderDinnerOptionDto;
 import com.lionxxw.kqsystem.entity.OrderDinnerOption;
-import com.lionxxw.kqsystem.service.OrderDinnerOptionService;
 import com.lionxxw.kqsystem.service.OrderDinnerOptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +45,7 @@ public class OrderDinnerOptionServiceImpl implements OrderDinnerOptionService {
         dao.updateByPrimaryKeySelective(data);
     }
 
+    @DataSource(name = DataSource.read)
     public OrderDinnerOptionDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, OrderDinnerOption.class, "getById");
         OrderDinnerOption data = dao.selectByPrimaryKey(id);
@@ -52,6 +53,7 @@ public class OrderDinnerOptionServiceImpl implements OrderDinnerOptionService {
         return dto;
     }
 
+    @DataSource(name = DataSource.read)
     public List<OrderDinnerOptionDto> queryByParam(OrderDinnerOptionDto obj) throws Exception {
         List<OrderDinnerOption> datas = dao.queryByParam(obj, null);
         if (ObjectUtils.notEmpty(datas)){
@@ -61,6 +63,7 @@ public class OrderDinnerOptionServiceImpl implements OrderDinnerOptionService {
         return null;
     }
 
+    @DataSource(name = DataSource.read)
     public PageResult<OrderDinnerOptionDto> queryByPage(OrderDinnerOptionDto obj, PageQuery query) throws Exception {
         int total = dao.countByParam(obj);
         if (total > 0){

@@ -21,58 +21,63 @@
     </style>
 </head>
 <body>
-<div>
-    <form id="fm" method="post" action="/kqs/order/now.do">
-        <input type="hidden" name="orderId" value="${(order.id)!}" />
-        <div class="fitem">
-            <label>点餐日期</label>
-            ${(order.orderDate?string('yyyy-MM-dd'))!}
-        </div>
-        <div class="fitem">
-            <label>截止时间</label>
-            ${(order.endTimeStr)!}
-        </div>
-        <div class="fitem">
-            <label>点餐选项</label>
-            <#if order?? && order.options??>
-                <#list order.options as option>
-                    <input type="radio" <#if result?? && result.optionId == option.id>checked="true"</#if> name="optionId" value="${(option.id)!}" id="option_${(option.id)!}"/><label for="option_${(option.id)!}" ondblclick="myDblClick(${(option.tempId)!});">${(option.name)!}</label>
-                </#list>
+<#if order??>
+    <div>
+        <form id="fm" method="post" action="/kqs/order/now.do">
+            <input type="hidden" name="orderId" value="${(order.id)!}" />
+            <div class="fitem">
+                <label>点餐日期</label>
+                ${(order.orderDate?string('yyyy-MM-dd'))!}
+            </div>
+            <div class="fitem">
+                <label>截止时间</label>
+                ${(order.endTimeStr)!}
+            </div>
+            <div class="fitem">
+                <label>点餐选项</label>
+                <#if order?? && order.options??>
+                    <#list order.options as option>
+                        <input type="radio" <#if result?? && result.optionId == option.id>checked="true"</#if> name="optionId" value="${(option.id)!}" id="option_${(option.id)!}"/><label for="option_${(option.id)!}" ondblclick="myDblClick(${(option.tempId)!});">${(option.name)!}</label>
+                    </#list>
+                </#if>
+            </div>
+            <div class="fitem">
+                <label>备注</label>
+                ${(order.note)!}
+            </div>
+        </form>
+        <div id="dlg-buttons">
+            <#if result??>
+                <#if result.state == 1>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-undo">退订</a>
+                </#if>
+                <#if result.state == -1>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">报名</a>
+                </#if>
+                <#else>
+                    <#if order?? && order.state == 1>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">报名</a>
+                    </#if>
             </#if>
         </div>
-        <div class="fitem">
-            <label>备注</label>
-            ${(order.note)!}
-        </div>
-    </form>
-    <div id="dlg-buttons">
-        <#if result??>
-            <#if result.state == 1>
-                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-undo">退订</a>
-            </#if>
-            <#if result.state == -1>
-                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">报名</a>
-            </#if>
-        <#else>
-            <#if order?? && order.state == 1>
-                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" iconcls="icon-save">报名</a>
-            </#if>
-        </#if>
     </div>
-</div>
-<div id="dlg2" class="easyui-dialog" style="width: 1000px; height: 600px; padding: 10px 20px;"
-     closed="true" buttons="#dlg2-buttons">
-    <form id="fm2" method="post">
-        <input type="hidden" name="id"/>
-        <div class="fitem" id="fck_editer">
-            <label>内容</label>
-            <textarea rows="10" cols="10" id="fck_note" name="note" required="true"></textarea>
-        </div>
-    </form>
-</div>
-<div id="dlg2-buttons">
-    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg2').dialog('close')" iconcls="icon-cancel">取消</a>
-</div>
+    <div id="dlg2" class="easyui-dialog" style="width: 1000px; height: 600px; padding: 10px 20px;"
+         closed="true" buttons="#dlg2-buttons">
+        <form id="fm2" method="post">
+            <input type="hidden" name="id"/>
+            <div class="fitem" id="fck_editer">
+                <label>内容</label>
+                <textarea rows="10" cols="10" id="fck_note" name="note" required="true"></textarea>
+            </div>
+        </form>
+    </div>
+    <div id="dlg2-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg2').dialog('close')" iconcls="icon-cancel">取消</a>
+    </div>
+<#else>
+    <h2>点餐管理员暂未发布,请稍后查看...</h2>
+</#if>
+
 <script type="text/javascript" src="/skin/js/validate_ex.js"></script>
 <script>
     var url = '';

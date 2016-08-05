@@ -233,7 +233,7 @@ public class OrderController extends KqsController {
     public ModelAndView now() throws Exception{
         ModelAndView mv = new ModelAndView();
         OrderDinnerDto nowDateOrder = getNowDateOrder();
-        if (nowDateOrder.getState() == OrderDinnerDto.OrderState.PUBLISH.getState()){
+        if (ObjectUtils.notNull(nowDateOrder) && nowDateOrder.getState() == OrderDinnerDto.OrderState.PUBLISH.getState()){
             getOtherOptions(nowDateOrder);
             mv.addObject("order", nowDateOrder);
             UserOrderResultDto result =  userOrderResultService.getResultByOrderId(nowDateOrder.getId());

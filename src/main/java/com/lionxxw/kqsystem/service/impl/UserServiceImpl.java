@@ -7,12 +7,14 @@ import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.code.utils.StringUtils;
 import com.lionxxw.kqsystem.dao.UserDao;
+import com.lionxxw.kqsystem.db.DataSource;
 import com.lionxxw.kqsystem.dto.UserDto;
 import com.lionxxw.kqsystem.entity.User;
 import com.lionxxw.kqsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService {
 
     public UserDto save(UserDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
+        obj.setCreateTime(new Date());
         User user = BeanUtils.createBeanByTarget(obj, User.class);
         userDao.insertSelective(user);
         obj.setId(user.getId());
@@ -45,6 +48,7 @@ public class UserServiceImpl implements UserService {
         userDao.updateByPrimaryKeySelective(user);
     }
 
+    @DataSource(name = DataSource.read)
     public UserDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, User.class, "getById");
         User user = userDao.selectByPrimaryKey(id);
@@ -52,6 +56,7 @@ public class UserServiceImpl implements UserService {
         return dto;
     }
 
+    @DataSource(name = DataSource.read)
     public List<UserDto> queryByParam(UserDto obj) throws Exception {
         List<User> users = userDao.queryByParam(obj, null);
         if (ObjectUtils.notEmpty(users)){
@@ -61,6 +66,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @DataSource(name = DataSource.read)
     public PageResult<UserDto> queryByPage(UserDto obj, PageQuery query) throws Exception {
         int total = userDao.countByParam(obj);
         if (total > 0){
@@ -72,6 +78,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @DataSource(name = DataSource.read)
     public UserDto getUserByAccount(String account) throws Exception {
         if (StringUtils.notTrimEmpty(account)){
             UserDto user = new UserDto();
@@ -84,7 +91,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
+    @DataSource(name = DataSource.read)
     public UserDto getUserByMobile(String mobile) throws Exception {
         if (StringUtils.notTrimEmpty(mobile)){
             UserDto user = new UserDto();
@@ -97,7 +104,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
+    @DataSource(name = DataSource.read)
     public UserDto getUserByEmail(String email) throws Exception {
         if (StringUtils.notTrimEmpty(email)) {
             UserDto user = new UserDto();

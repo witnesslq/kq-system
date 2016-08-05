@@ -7,6 +7,7 @@ import com.lionxxw.kqsystem.code.utils.ExceptionUtils;
 import com.lionxxw.kqsystem.code.utils.ObjectUtils;
 import com.lionxxw.kqsystem.dao.OptionTemplateDao;
 import com.lionxxw.kqsystem.dao.UserOrderResultDao;
+import com.lionxxw.kqsystem.db.DataSource;
 import com.lionxxw.kqsystem.dto.UserOrderResultDto;
 import com.lionxxw.kqsystem.entity.UserOrderResult;
 import com.lionxxw.kqsystem.service.UserOrderResultService;
@@ -26,6 +27,7 @@ public class UserOrderResultServiceImpl implements UserOrderResultService {
 
     public UserOrderResultDto save(UserOrderResultDto obj) throws Exception {
         ExceptionUtils.checkObjIsNull(obj);
+        obj.setCreateTime(new Date());
         UserOrderResult data = BeanUtils.createBeanByTarget(obj, UserOrderResult.class);
         dao.insertSelective(data);
         obj.setId(data.getId());
@@ -50,6 +52,7 @@ public class UserOrderResultServiceImpl implements UserOrderResultService {
         dao.updateByPrimaryKeySelective(data);
     }
 
+    @DataSource(name = DataSource.read)
     public UserOrderResultDto getById(Long id) throws Exception {
         ExceptionUtils.checkIdIsNull(id, UserOrderResult.class, "getById");
         UserOrderResult data = dao.selectByPrimaryKey(id);
@@ -57,6 +60,7 @@ public class UserOrderResultServiceImpl implements UserOrderResultService {
         return dto;
     }
 
+    @DataSource(name = DataSource.read)
     public List<UserOrderResultDto> queryByParam(UserOrderResultDto obj) throws Exception {
         List<UserOrderResult> datas = dao.queryByParam(obj, null);
         if (ObjectUtils.notEmpty(datas)){
@@ -66,6 +70,7 @@ public class UserOrderResultServiceImpl implements UserOrderResultService {
         return null;
     }
 
+    @DataSource(name = DataSource.read)
     public PageResult<UserOrderResultDto> queryByPage(UserOrderResultDto obj, PageQuery query) throws Exception {
         int total = dao.countByParam(obj);
         if (total > 0){
