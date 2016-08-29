@@ -9,7 +9,6 @@ import java.io.Serializable;
 public class Response<T> implements Serializable {
 
 	public Response(){
-		
 	}
 	
 	public Response(int status, String message, T data){
@@ -23,8 +22,6 @@ public class Response<T> implements Serializable {
 	public String message;
 	
 	public T data;
-
-	public T parentData;
 
 	public int getStatus() {
 		return status;
@@ -48,13 +45,5 @@ public class Response<T> implements Serializable {
 
 	public void setData(T data) {
 		this.data = data;
-	}
-
-	public T getParentData() {
-		return parentData;
-	}
-
-	public void setParentData(T parentData) {
-		this.parentData = parentData;
 	}
 }
