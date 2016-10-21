@@ -39,6 +39,7 @@
     <lombok-version>1.14.4</lombok-version>
     <jackson-version>2.1.0</jackson-version>
     <poi-version>3.8</poi-version>
+    <druid-version>1.0.26</druid-version>
   </properties>
 
   <dependencies>
@@ -168,11 +169,18 @@
       <version>${jackson-core-asl-version}</version>
     </dependency>
     <!-- connect pool with c3p0 -->
-    <dependency>
+    <!--<dependency>
       <groupId>c3p0</groupId>
       <artifactId>c3p0</artifactId>
       <version>${c3p0-version}</version>
+    </dependency>-->
+    <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>${druid-version}</version>
     </dependency>
+
     <!-- apache commons jar -->
 
     <!--responsebody 配置包 开始-->
